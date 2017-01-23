@@ -1,7 +1,7 @@
-package com.optrak.products.impl
+package optrak.lagom.products.impl
 
 import com.lightbend.lagom.scaladsl.playjson.Jsonable
-import com.optrak.products.api.Product
+import optrak.lagom.products.api.Product
 import play.api.libs.json.{Format, Json}
   /**
   * Created by tim on 22/01/17.

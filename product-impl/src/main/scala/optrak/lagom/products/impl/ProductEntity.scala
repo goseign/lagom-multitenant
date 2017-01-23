@@ -1,13 +1,14 @@
-package com.optrak.products.impl
+package optrak.lagom.products.impl
 
 import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import com.lightbend.lagom.scaladsl.playjson.{Jsonable, SerializerRegistry, Serializers}
-import com.optrak.products.api.{Product, ProductUpdate}
+import optrak.lagom.products.api.{Product, ProductUpdate}
 import play.api.libs.json.{Format, Json}
 import JsonFormats._
-import com.optrak.products.impl.ProductEvents.{ProductChanged, ProductEvent}
+import optrak.lagom.products.impl.ProductEvents.{ProductChanged, ProductEvent}
+import optrak.lagom.products.impl.ProductEvents.ProductEvent
 
 import scala.collection.immutable.Seq
 

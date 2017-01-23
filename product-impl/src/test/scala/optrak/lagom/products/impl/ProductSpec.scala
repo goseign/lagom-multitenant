@@ -1,10 +1,10 @@
-package com.optrak.products.impl
+package optrak.lagom.products.impl
 
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
-import com.optrak.products.api.{Product, ProductUpdate}
-import com.optrak.products.impl.ProductEvents.{ProductChanged, ProductEvent}
+import optrak.lagom.products.api.{Product, ProductUpdate}
+import optrak.lagom.products.impl.ProductEvents.{ProductChanged, ProductEvent}
 import org.specs2.matcher.MatchResult
 import org.specs2.mutable.{BeforeAfter, Specification}
 

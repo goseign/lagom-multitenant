@@ -1,4 +1,4 @@
-package com.optrak.products.impl
+package optrak.lagom.products.impl
 
 import java.time.Duration
 import java.util.UUID

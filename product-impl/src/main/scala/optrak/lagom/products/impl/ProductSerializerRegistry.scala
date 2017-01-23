@@ -1,12 +1,13 @@
-package com.optrak.products.impl
+package optrak.lagom.products.impl
 
 import com.lightbend.lagom.scaladsl.playjson.{SerializerRegistry, Serializers}
-import com.optrak.products.api.Product
-import com.optrak.products.api.Product._
+import optrak.lagom.products.api.Product
+import optrak.lagom.products.api.Product._
 
 import scala.collection.immutable.Seq
 import JsonFormats._
-import com.optrak.products.impl.ProductEvents.ProductChanged
+import optrak.lagom.products.impl.ProductEvents.ProductChanged
+import optrak.lagom.products.impl.ProductEvents.ProductChanged
 import play.api.libs.json.{Format, Json}
 
 /**

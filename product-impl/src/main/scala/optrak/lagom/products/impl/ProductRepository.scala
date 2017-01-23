@@ -1,8 +1,9 @@
-package com.optrak.products.impl
+package optrak.lagom.products.impl
 
 import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor
 import com.lightbend.lagom.scaladsl.persistence.cassandra.{CassandraReadSide, CassandraSession}
-import com.optrak.products.impl.ProductEvents.ProductEvent
+import optrak.lagom.products.impl.ProductEvents.ProductEvent
+import optrak.lagom.products.impl.ProductEvents.ProductEvent
 
 import scala.concurrent.ExecutionContext
 
@@ -16,8 +17,4 @@ private[impl] class ProductRepository(session: CassandraSession)(implicit ec: Ex
 
 
 
-}
-
-private[impl] class ItemEventProcessor(session: CassandraSession, readSide: CassandraReadSide)(implicit ec: ExecutionContext)
-  extends ReadSideProcessor[ProductEvent] {
 }
