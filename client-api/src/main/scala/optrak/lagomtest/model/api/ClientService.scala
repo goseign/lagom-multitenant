@@ -12,7 +12,7 @@ trait ModelService extends Service {
 
   def createClient(clientId: ClientId): ServiceCall[CreateClient, Done]
 
-  def createModel(clientId: ClientId): ServiceCall[CreateModel, ModelCreated]
+  def createModel(clientId: ClientId): ServiceCall[CreateModel, CreatedModel]
 
   def removeModel(modelId: ModelId): ServiceCall[NotUsed, Done]
 
@@ -31,9 +31,10 @@ trait ModelService extends Service {
 
 }
 
-case class CreateClient(description: String)
-case class CreateModel(description: String)
-case class ModelCreated(id: String)
+sealed trait ClientCommand
+case class CreateClient(id: ClientId, description: String) extends ClientCommand
+case class CreateModel(description: String) extends ClientCommand
+case object RemoveModel extends ClientCommand
 
 object CreateClient {
   implicit def format: Format[CreateClient] = Json.format[CreateClient]
@@ -43,6 +44,9 @@ object CreateModel {
   implicit def format: Format[CreateModel] = Json.format[CreateModel]
 }
 
-object ModelCreated {
-  implicit def format: Format[ModelCreated] = Json.format[ModelCreated]
+// responses
+case class CreatedModel(id: String)
+
+object CreatedModel {
+  implicit def format: Format[CreatedModel] = Json.format[CreatedModel]
 }

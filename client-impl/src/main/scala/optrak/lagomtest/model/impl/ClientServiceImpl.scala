@@ -5,7 +5,7 @@ import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
 import optrak.lagomtest.model.Models
 import optrak.lagomtest.model.Models.{ClientId, ModelId, ProductId, SiteId}
-import optrak.lagomtest.model.api.{CreateClient, CreateModel, ModelCreated, ModelService}
+import optrak.lagomtest.model.api.{CreateClient, CreateModel, CreatedModel$, ModelService}
 
 /**
   * Created by tim on 26/01/17.
@@ -14,7 +14,7 @@ import optrak.lagomtest.model.api.{CreateClient, CreateModel, ModelCreated, Mode
 class ClientServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) extends ModelService {
   override def createClient(clientId: ClientId): ServiceCall[CreateClient, Done] = ???
 
-  override def createModel(clientId: ClientId): ServiceCall[CreateModel, ModelCreated] = ???
+  override def createModel(clientId: ClientId): ServiceCall[CreateModel, CreatedModel] = ???
 
   override def removeModel(modelId: ModelId): Unit = ???
 }

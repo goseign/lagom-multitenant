@@ -1,6 +1,6 @@
 package optrak.lagomtest.model.impl
 
-import optrak.lagomtest.model.Models.{Client, Model, ModelId}
+import optrak.lagomtest.model.Models.{Client, ClientId, Model, ModelId}
 import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.model.ModelsJson._
   /**
@@ -10,10 +10,10 @@ import optrak.lagomtest.model.ModelsJson._
 object ClientEvents {
   sealed trait ClientEvent
 
-  case class ClientChanged(client: Client) extends ClientEvent
+  case class ClientCreated(id: ClientId, description: String) extends ClientEvent
 
-  object ClientChanged {
-    implicit val format: Format[ClientChanged] = Json.format[ClientChanged]
+  object Created {
+    implicit val format: Format[ClientCreated] = Json.format[ClientCreated]
   }
 
   case class ClientAdded(client: Client) extends ClientEvent
@@ -22,10 +22,10 @@ object ClientEvents {
     implicit val format: Format[ClientAdded] = Json.format[ClientAdded]
   }
     
-  case class ModelAdded(model: Model) extends ClientEvent
+  case class ModelCreated(id: String, description: String) extends ClientEvent
 
-  object ModelAdded {
-    implicit val format: Format[ModelAdded] = Json.format[ModelAdded]
+  object ModelCreated {
+    implicit val format: Format[ModelCreated] = Json.format[ModelCreated]
   }
 
   case class ModelUpdated(model: Model) extends ClientEvent
@@ -34,10 +34,10 @@ object ClientEvents {
     implicit val format: Format[ModelUpdated] = Json.format[ModelUpdated]
   }
 
-  case class ModelRemved(id: ModelId) extends ClientEvent
+  case class ModelRemoved(id: ModelId) extends ClientEvent
 
-  object ModelRemved {
-    implicit val format: Format[ModelRemved] = Json.format[ModelRemved]
+  object ModelRemoved {
+    implicit val format: Format[ModelRemoved] = Json.format[ModelRemoved]
   }
 
 }

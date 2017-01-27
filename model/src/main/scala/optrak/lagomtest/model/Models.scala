@@ -20,7 +20,9 @@ object Models {
 
   type ClientId = String
 
-  case class Client(id: ClientId, models: Set[ModelId], description: String)
+  case class Client(id: ClientId, models: Set[ModelDescription], description: String)
+
+  case class ModelDescription(id: ModelId, description: String)
 
 
 }
