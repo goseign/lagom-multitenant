@@ -1,4 +1,4 @@
-organization in ThisBuild := "com.optrak"
+organization in ThisBuild := "optrak"
 version in ThisBuild := "1.0-SNAPSHOT"
 
 // the Scala version that will be used for cross-compiled libraries
