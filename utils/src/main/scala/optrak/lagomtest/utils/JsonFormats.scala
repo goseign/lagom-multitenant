@@ -1,3 +1,4 @@
+package optrak.lagomtest.utils
 import java.time.Duration
 import java.util.UUID
 

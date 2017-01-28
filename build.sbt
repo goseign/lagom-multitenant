@@ -37,6 +37,7 @@ lazy val `client-api` = (project in file("client-api"))
       lagomScaladslApi
     )
   ).dependsOn(`model`)
+  .dependsOn(`utils`)
 
 lazy val `client-impl` = (project in file("client-impl"))
   .enablePlugins(LagomScala)
@@ -45,6 +46,7 @@ lazy val `client-impl` = (project in file("client-impl"))
       lagomScaladslPersistenceCassandra,
       lagomScaladslTestKit,
       macwire,
+      scalaTest,
       specs2
     )
   )
