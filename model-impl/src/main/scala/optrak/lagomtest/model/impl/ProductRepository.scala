@@ -1,4 +1,4 @@
-package optrak.lagomtest.model.impl
+package optrak.lagomtest.datamodel.impl
 
 import com.lightbend.lagom.scaladsl.persistence.cassandra.{CassandraReadSide, CassandraSession}
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEventTag, ReadSideProcessor}

@@ -36,7 +36,7 @@ lazy val `client-api` = (project in file("client-api"))
       lagomScaladslPersistenceCassandra,
       lagomScaladslApi
     )
-  ).dependsOn(`model`)
+  ).dependsOn(`datamodel`)
   .dependsOn(`utils`)
 
 lazy val `client-impl` = (project in file("client-impl"))
@@ -51,12 +51,12 @@ lazy val `client-impl` = (project in file("client-impl"))
     )
   )
   .settings(lagomForkedTestSettings: _*)
-  .dependsOn(`model`)
+  .dependsOn(`datamodel`)
   .dependsOn(`utils`)
   .dependsOn(`client-api`)
 
 
-lazy val `model` = (project in file("model"))
+lazy val `datamodel` = (project in file("datamodel"))
   .enablePlugins(LagomScala)
   .settings(
     libraryDependencies ++= Seq(

@@ -1,7 +1,6 @@
-package optrak.lagomtest.model.impl
+package optrak.lagomtest.datamodel.impl
 
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
-import optrak.lagomtest.model.api.Product
 import play.api.libs.json.Format
 
 import scala.collection.immutable.Seq

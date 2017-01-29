@@ -1,6 +1,5 @@
-package optrak.lagomtest.model.impl
+package optrak.lagomtest.datamodel.impl
 
-import optrak.lagomtest.model.api.Product
 import play.api.libs.json.{Format, Json}
   /**
   * Created by tim on 22/01/17.

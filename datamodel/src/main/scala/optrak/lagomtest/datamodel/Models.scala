@@ -1,4 +1,4 @@
-package optrak.lagomtest.model
+package optrak.lagomtest.datamodel
 
 import java.util.UUID
 

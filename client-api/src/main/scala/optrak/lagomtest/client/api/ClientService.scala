@@ -1,12 +1,12 @@
-package optrak.lagomtest.model.api
+package optrak.lagomtest.client.api
 
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
-import optrak.lagomtest.model.Models._
+import optrak.lagomtest.datamodel.Models._
 import optrak.lagomtest.utils.JsonFormats
 import play.api.libs.json.{Format, Json}
-import optrak.lagomtest.model.ModelsJson._
+import optrak.lagomtest.datamodel.ModelsJson._
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -21,7 +21,7 @@ trait ClientService extends Service {
 
   def getClient(clientId: ClientId): ServiceCall[NotUsed, Client]
 
-  def getAllClients: ServiceCall[NotUsed, Seq[Client]]
+  def getAllClients: ServiceCall[NotUsed, Seq[ClientId]]
 
   override final def descriptor = {
     import Service._
@@ -42,11 +42,6 @@ sealed trait ClientApiCommand
 case class CreateClient(description: String) extends ClientApiCommand with ReplyType[Done]
 case class CreateModel(description: String) extends ClientApiCommand with ReplyType[ModelCreated]
 case class RemoveModel(id: ModelId) extends ClientApiCommand with ReplyType[Done]
-
-sealed trait ClientApiRequest
-case object GetClient extends ClientApiRequest {
-  implicit def format: Format[GetClient.type] = JsonFormats.singletonFormat(GetClient)
-}
 
 object CreateClient {
   implicit def format: Format[CreateClient] = Json.format[CreateClient]

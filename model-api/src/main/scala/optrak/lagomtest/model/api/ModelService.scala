@@ -1,8 +1,8 @@
-package optrak.lagomtest.model.api
+package optrak.lagomtest.datamodel.api
 
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
-import optrak.lagomtest.model.Models._
+import optrak.lagomtest.datamodel.Models._
 import play.api.libs.json.{Format, Json}
 
 /**

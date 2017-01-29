@@ -1,14 +1,23 @@
-package optrak.lagomtest.model.impl
+package optrak.lagomtest.client.impl
 
-import optrak.lagomtest.model.Models.{Client, ClientId, Model, ModelId}
+import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag}
+import optrak.lagomtest.datamodel.Models.{Client, ClientId, Model, ModelId}
 import play.api.libs.json.{Format, Json}
-import optrak.lagomtest.model.ModelsJson._
+import optrak.lagomtest.datamodel.ModelsJson._
   /**
   * Created by tim on 22/01/17.
   * Copyright Tim Pigden, Hertford UK
   */
 object ClientEvents {
-  sealed trait ClientEvent
+  // nb the client event needs to be aggregateEvent because it is used by read processor and needs an aggregate tag
+  sealed trait ClientEvent extends AggregateEvent[ClientEvent] {
+      override def aggregateTag = ClientEvent.Tag
+  }
+
+  object ClientEvent {
+    val NumShards = 4
+    val Tag = AggregateEventTag.sharded[ClientEvent](NumShards)
+  }
 
   case class ClientCreated(id: String, description: String) extends ClientEvent
 

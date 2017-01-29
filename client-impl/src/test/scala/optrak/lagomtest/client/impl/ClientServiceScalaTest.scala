@@ -1,4 +1,4 @@
-package optrak.lagomtest.model.impl
+package optrak.lagomtest.client.impl
 
 /**
   * Created by tim on 28/01/17.
@@ -12,8 +12,9 @@ import com.lightbend.lagom.scaladsl.api.transport.TransportException
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.UnhandledCommandException
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
+import optrak.lagomtest.client.api.{ClientService, ModelCreated}
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
-import optrak.lagomtest.model.api.{CreateClient => ApiCreateClient, CreateModel => ApiCreateModel, ModelCreated => ApiModelCreated, RemoveModel => ApiRemoveModel, _}
+import optrak.lagomtest.client.api.{CreateClient => ApiCreateClient, CreateModel => ApiCreateModel, ModelCreated => ApiModelCreated, RemoveModel => ApiRemoveModel, _}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -53,8 +54,8 @@ class ClientServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndA
         answer2 should ===(Done)
       })
       exp.map { te =>
-        println(s"te is code ${te.errorCode} message ${te.exceptionMessage}")
-        te shouldBe a[ClientAlreadyExistsException]
+        // println(s"te is code ${te.errorCode} message ${te.exceptionMessage}")
+        te.toString should include("tim already exists")
       }
     }
 
@@ -63,7 +64,7 @@ class ClientServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndA
         added <- client.createModel(clientId).invoke(ApiCreateModel("nice model"))
         removed <- client.removeModel(clientId).invoke(ApiRemoveModel(added.id))
       } yield {
-        added shouldBe a [ApiModelCreated]
+        added shouldBe a [ModelCreated]
 
         removed should === (Done)
       }

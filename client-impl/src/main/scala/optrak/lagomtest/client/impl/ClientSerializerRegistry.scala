@@ -1,9 +1,9 @@
-package optrak.lagomtest.model.impl
+package optrak.lagomtest.client.impl
 
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
-import optrak.lagomtest.model.impl.ClientEvents.{ClientCreated, ModelCreated, ModelRemoved}
+import optrak.lagomtest.client.impl.ClientEvents.{ClientCreated, ModelCreated, ModelRemoved}
 import play.api.libs.json.Format
-import optrak.lagomtest.model.api.{ModelCreated => ApiModelCreated, CreateClient => ApiCreateClient, CreateModel => ApiCreateModel, RemoveModel => ApiRemoveModel}
+import optrak.lagomtest.client.api.{CreateClient => ApiCreateClient, CreateModel => ApiCreateModel, ModelCreated => ApiModelCreated, RemoveModel => ApiRemoveModel}
 
 import scala.collection.immutable.Seq
 
@@ -24,9 +24,7 @@ object ClientSerializerRegistry extends JsonSerializerRegistry {
       JsonSerializer[ApiModelCreated],
       JsonSerializer[ApiRemoveModel],
       JsonSerializer[RemoveModel],
-      JsonSerializer[ModelRemoved],
-      JsonSerializer[EmptyClientState.type],
-      JsonSerializer[NonEmptyClientState]
+      JsonSerializer[ModelRemoved]
 
     )
     res

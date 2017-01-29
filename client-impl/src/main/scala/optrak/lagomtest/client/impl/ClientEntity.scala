@@ -1,15 +1,14 @@
-package optrak.lagomtest.model.impl
+package optrak.lagomtest.client.impl
 
 import akka.Done
 import com.lightbend.lagom.scaladsl.api.transport.{TransportErrorCode, TransportException}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
-import optrak.lagomtest.model.Models._
-import optrak.lagomtest.model.impl.ClientEvents.{ClientCreated, ClientEvent, ModelCreated, ModelRemoved}
+import optrak.lagomtest.datamodel.Models._
+import optrak.lagomtest.client.impl.ClientEvents.{ClientCreated, ClientEvent, ModelCreated, ModelRemoved}
 import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.utils.JsonFormats
-import optrak.lagomtest.model.api.{CreateClient => ApiCreateClient, CreateModel => ApiCreateModel, ModelCreated => ApiModelCreated}
-import optrak.lagomtest.model.ModelsJson._
+import optrak.lagomtest.client.api.{ModelCreated => ApiModelCreated}
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -21,21 +20,21 @@ class ClientEntity extends PersistentEntity {
 
   override type Command = ClientCommand
   override type Event = ClientEvent
-  override type State = ClientState
+  override type State = Option[Client]
 
 
   /**
     * The initial state. This is used if there is no snapshotted state to be found.
     */
-  override def initialState = EmptyClientState
+  override def initialState = None
 
   /**
     * An entity can define different behaviours for different states, so the behaviour
     * is a function of the current state to a set of actions.
     */
   override def behavior: Behavior = {
-    case EmptyClientState => noClientYet
-    case NonEmptyClientState(s) => hasClient
+    case None => noClientYet
+    case Some(s) => hasClient
   }
 
   def noClientYet: Actions = {
@@ -48,7 +47,7 @@ class ClientEntity extends PersistentEntity {
     }
       .onEvent {
         case (ClientCreated(id, description), _) =>
-          NonEmptyClientState(Client(id, Set.empty, description))
+          Some(Client(id, Set.empty, description))
       }
   }
 
@@ -69,21 +68,12 @@ class ClientEntity extends PersistentEntity {
 
     }.onEvent {
       // Event handler for the ClientChanged event
-      case (ModelCreated(id, description), NonEmptyClientState(client)) =>
-        NonEmptyClientState(client.copy(models = client.models + ModelDescription(id, description)))
-      case (ModelRemoved(id: ModelId), NonEmptyClientState(client)) =>
-        NonEmptyClientState(client.copy(models = client.models.filterNot(_.id == id)))
+      case (ModelCreated(id, description), Some(client)) =>
+        Some(client.copy(models = client.models + ModelDescription(id, description)))
+      case (ModelRemoved(id: ModelId), Some(client)) =>
+        Some(client.copy(models = client.models.filterNot(_.id == id)))
     }
   }
-}
-
-sealed trait ClientState
-case object EmptyClientState extends ClientState {
-  implicit def format: Format[EmptyClientState.type] = JsonFormats.singletonFormat(EmptyClientState)
-}
-case class NonEmptyClientState(client: Client) extends ClientState
-object NonEmptyClientState {
-  implicit def format: Format[NonEmptyClientState] = Json.format[NonEmptyClientState]
 }
 
 // --------------------------------- internal commands

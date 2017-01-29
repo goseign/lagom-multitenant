@@ -4,9 +4,8 @@ import akka.actor.ActorSystem
 import akka.testkit.TestKit
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
 import com.optrak.products.api.Product
-import optrak.lagomtest.model.impl.ProductEvents.{ProductChanged, ProductEvent}
-import optrak.lagomtest.model.api.{Product, ProductUpdate}
-import optrak.lagomtest.model.impl._
+import optrak.lagomtest.datamodel.impl.ProductEvents.{ProductChanged, ProductEvent}
+import optrak.lagomtest.datamodel.impl._
 import org.specs2.matcher.MatchResult
 import org.specs2.mutable.{BeforeAfter, Specification}
 
