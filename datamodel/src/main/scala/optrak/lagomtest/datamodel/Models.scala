@@ -8,17 +8,25 @@ import java.util.UUID
   */
 object Models {
 
-  type ProductId = UUID
+  type ProductId = String
 
   case class Product(id: ProductId, size: Int, group: String)
 
-  type SiteId = UUID
+  type SiteId = String
 
   case class Site(id: SiteId, siteCode: String, town: String, address: Option[String], postcode: String)
 
   type ModelId = UUID
 
-  case class Model(id: ModelId, products: Set[Product], sites: Set[Site], description: String, deleted: Boolean)
+  case class Model(id: ModelId,
+                   description: String,
+                   products: Map[ProductId, Product] = Map.empty,
+                   sites: Map[SiteId, Site] = Map.empty,
+                   deleted: Boolean = false)
+
+  object Model {
+    def apply(modelDescription: ModelDescription) = new Model(modelDescription.id, modelDescription.description)
+  }
 
   type ClientId = String
 

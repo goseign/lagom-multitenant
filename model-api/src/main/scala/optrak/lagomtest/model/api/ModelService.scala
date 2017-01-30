@@ -1,22 +1,28 @@
-package optrak.lagomtest.datamodel.api
+package optrak.lagomtest.model.api
 
 import akka.{Done, NotUsed}
+import com.lightbend.lagom.scaladsl.api.broker.Topic
+import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.datamodel.Models._
+import optrak.lagomtest.datamodel.ModelsJson._
+import optrak.lagomtest.model.api.ModelEvents._
 import play.api.libs.json.{Format, Json}
 
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
   */
+
+object ModelService {
+  def topicName = "ModelTopic"
+}
+
 trait ModelService extends Service {
 
-  def createClient(clientId: ClientId): ServiceCall[CreateClient, Done]
+  def createModel(modelId: ModelId): ServiceCall[String, Done]
 
-  def createModel(clientId: ClientId): ServiceCall[CreateModel, ModelCreated]
-
-  def removeModel(modelId: ModelId)
-
+  // product CRUD
   def addProduct(modelId: ModelId): ServiceCall[Product, Done]
 
   def updateProduct(modelId: ModelId): ServiceCall[Product, Done]
@@ -25,6 +31,8 @@ trait ModelService extends Service {
 
   def removeProduct(modelId: ModelId): ServiceCall[ProductId, Done]
 
+  // Site CRUD
+
   def addSite(modelId: ModelId): ServiceCall[Site, Done]
 
   def updateSite(modelId: ModelId): ServiceCall[Site, Done]
@@ -32,6 +40,8 @@ trait ModelService extends Service {
   def addOrUpdateSite(modelId: ModelId): ServiceCall[Site, Done]
 
   def removeSite(modelId: ModelId): ServiceCall[SiteId, Done]
+
+  // query methods, getting one or all the products from the model
   
   def product(modelId: ModelId, productId: ProductId): ServiceCall[NotUsed, Product]
 
@@ -45,13 +55,14 @@ trait ModelService extends Service {
   override final def descriptor = {
     import Service._
 
-    named("product").withCalls(
-      pathCall("/optrak.model.api/createClient/:id", createClient _),
+    named("model").withCalls(
       pathCall("/optrak.model.api/createModel/:id", createModel _),
+
       pathCall("/optrak.model.api/addProduct/:id", addProduct _),
       pathCall("/optrak.model.api/updateProduct/:id", updateProduct _),
       pathCall("/optrak.model.api/addOrUpdateProduct/:id", addOrUpdateProduct _),
       pathCall("/optrak.model.api/removeProduct/:id", removeProduct _),
+
       pathCall("/optrak.model.api/addSite/:id", addSite _),
       pathCall("/optrak.model.api/updateSite/:id", updateSite _),
       pathCall("/optrak.model.api/addOrUpdateSite/:id", addOrUpdateSite _),
@@ -63,13 +74,15 @@ trait ModelService extends Service {
       pathCall("/optrak.model.api/site/:modelId", sites _)
 
 
-    ).withAutoAcl(true)
+    ).withTopics(
+      topic(ModelService.topicName, modelTopic)
+      .addProperty(KafkaProperties.partitionKeyStrategy,
+      PartitionKeyStrategy[ModelEvent](_.modelId.toString))
+    )
+    .withAutoAcl(true)
+
   }
+  def modelTopic() : Topic[ModelEvent]
 
 }
-
-case class CreateClient(description: String)
-case class CreateModel(description: String)
-case class ModelCreated(id: String)
-
 

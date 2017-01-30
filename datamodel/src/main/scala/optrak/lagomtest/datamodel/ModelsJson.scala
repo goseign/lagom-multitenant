@@ -10,6 +10,7 @@ import play.api.libs.json._
 object ModelsJson {
   implicit val formatProduct: Format[Product] = Json.format[Product]
   implicit val formatSite: Format[Site] = Json.format[Site]
+  //implicit val formatSites: Format[Map[SiteId, Site]] = Json.format[Map[SiteId, Site]]
   implicit val formatModel: Format[Model] = Json.format[Model]
   implicit val formatModelDescipriotn: Format[ModelDescription] = Json.format[ModelDescription]
 

@@ -6,15 +6,14 @@ scalaVersion in ThisBuild := "2.11.8"
 
 val macwire = "com.softwaremill.macwire" %% "macros" % "2.2.5" % "provided"
 val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1" % Test
-val specs2 = "org.specs2" %% "specs2-core" % "3.8.7" % Test
-/*
+
 lazy val `model-api` = (project in file("model-api"))
   .settings(
     libraryDependencies ++= Seq(
       lagomScaladslPersistenceCassandra,
       lagomScaladslApi
     )
-  ).dependsOn(`model`)
+  ).dependsOn(`datamodel`)
 
 lazy val `model-impl` = (project in file("model-impl"))
   .enablePlugins(LagomScala)
@@ -22,18 +21,21 @@ lazy val `model-impl` = (project in file("model-impl"))
     libraryDependencies ++= Seq(
       lagomScaladslPersistenceCassandra,
       lagomScaladslTestKit,
+      lagomScaladslKafkaBroker,
       macwire,
-      specs2
+      scalaTest
     )
   )
   .settings(lagomForkedTestSettings: _*)
-  .dependsOn(`model`)
+  .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
   .dependsOn(`model-api`)
-*/
+
 lazy val `client-api` = (project in file("client-api"))
   .settings(
     libraryDependencies ++= Seq(
       lagomScaladslPersistenceCassandra,
+      lagomScaladslPubSub,
       lagomScaladslApi
     )
   ).dependsOn(`datamodel`)
@@ -44,7 +46,9 @@ lazy val `client-impl` = (project in file("client-impl"))
   .settings(
     libraryDependencies ++= Seq(
       lagomScaladslPersistenceCassandra,
+      lagomScaladslPubSub,
       lagomScaladslTestKit,
+      lagomScaladslKafkaBroker,
       macwire,
       scalaTest,
       specs2
@@ -62,8 +66,7 @@ lazy val `datamodel` = (project in file("datamodel"))
     libraryDependencies ++= Seq(
       lagomScaladslPersistenceCassandra,
       lagomScaladslTestKit,
-      macwire,
-      specs2
+      macwire
     )
   )
   .settings(lagomForkedTestSettings: _*)
@@ -72,8 +75,7 @@ lazy val `utils` = (project in file("utils"))
   .enablePlugins(LagomScala)
   .settings(
     libraryDependencies ++= Seq(
-      macwire,
-      specs2
+      macwire
     )
   )
   .settings(lagomForkedTestSettings: _*)
