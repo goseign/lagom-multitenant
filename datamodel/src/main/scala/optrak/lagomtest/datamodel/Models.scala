@@ -10,7 +10,7 @@ object Models {
 
   type ProductId = String
 
-  case class Product(id: ProductId, size: Int, group: String)
+  case class Product(id: ProductId, size: Int, group: String, cancelled: Boolean)
 
   type SiteId = String
 

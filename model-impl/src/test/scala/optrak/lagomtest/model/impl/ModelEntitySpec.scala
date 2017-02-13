@@ -28,8 +28,8 @@ class ModelEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll with
   val hello = "hellow"
   val modelDescription = ModelDescription(modelId, hello)
 
-  val product1 = Product("product1", 1, "g1")
-  val product2 = Product("product2", 2, "g1")
+  val product1 = Product("product1", 1, "g1",false)
+  val product2 = Product("product2", 2, "g1", false)
 
   private def withTestDriver[T](block: PersistentEntityTestDriver[ModelCommand, ModelEvent, Option[Model]] => T): T= {
     val driver = new PersistentEntityTestDriver(system, new ModelEntity, modelId.toString)

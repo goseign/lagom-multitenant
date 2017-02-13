@@ -11,6 +11,7 @@ import com.lightbend.lagom.scaladsl.server.LagomApplication
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.client.impl.ClientEvents.{ClientCreated, ClientEvent}
 import optrak.lagomtest.datamodel.Models.{Client, ClientId}
+import optrak.lagomtest.utils.ReadSideTestDriver
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.ws.ahc.AhcWSComponents
 

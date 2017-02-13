@@ -1,11 +1,11 @@
-package optrak.lagomtest.client.impl
+package optrak.lagomtest.utils
 
 import akka.Done
 import akka.persistence.query.Offset
 import akka.stream.Materializer
 import akka.stream.scaladsl.{Sink, Source}
-import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor.ReadSideHandler
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, EventStreamElement, ReadSide, ReadSideProcessor}
+import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor.ReadSideHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 

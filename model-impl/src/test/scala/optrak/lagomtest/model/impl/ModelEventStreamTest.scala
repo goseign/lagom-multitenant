@@ -24,7 +24,7 @@ class ModelEventStreamTest extends AsyncWordSpec with Matchers with BeforeAndAft
   }
 
   val modelService = server.serviceClient.implement[ModelService]
-  val product1 = Product("product1", 1, "g1")
+  val product1 = Product("product1", 1, "g1", false)
 
   override protected def afterAll() = server.stop()
 

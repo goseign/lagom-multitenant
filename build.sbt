@@ -31,6 +31,31 @@ lazy val `model-impl` = (project in file("model-impl"))
   .dependsOn(`utils`)
   .dependsOn(`model-api`)
 
+lazy val `product-api` = (project in file("product-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslApi
+    )
+  ).dependsOn(`datamodel`)
+
+lazy val `product-impl` = (project in file("product-impl"))
+  .enablePlugins(LagomScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslTestKit,
+      lagomScaladslKafkaBroker,
+      macwire,
+      scalaTest
+    )
+  )
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
+  .dependsOn(`product-api`)
+
+
 lazy val `client-api` = (project in file("client-api"))
   .settings(
     libraryDependencies ++= Seq(
@@ -75,7 +100,10 @@ lazy val `utils` = (project in file("utils"))
   .enablePlugins(LagomScala)
   .settings(
     libraryDependencies ++= Seq(
-      macwire
+      macwire,
+      lagomScaladslPersistenceCassandra % "test",
+      lagomScaladslPubSub % "test",
+      lagomScaladslApi % "test"
     )
   )
   .settings(lagomForkedTestSettings: _*)
