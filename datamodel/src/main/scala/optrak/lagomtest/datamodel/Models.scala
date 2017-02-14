@@ -28,11 +28,11 @@ object Models {
     def apply(modelDescription: ModelDescription) = new Model(modelDescription.id, modelDescription.description)
   }
 
-  type ClientId = String
+  type TenantId = String
 
   // todo - add active/inactive to test repository querying from uri
   // case class Client(id: ClientId, models: Set[ModelDescription], description: String, active: Boolean)
-  case class Client(id: ClientId, models: Set[ModelDescription], description: String)
+  case class Tenant(id: TenantId, models: Set[ModelDescription], description: String)
 
   case class ModelDescription(id: ModelId, description: String)
 

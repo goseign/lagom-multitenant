@@ -1,8 +1,8 @@
 package optrak.lagomtest.model.impl
 
 import akka.Done
-import optrak.lagomtest.datamodel.Models._
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
+import optrak.lagomtest.datamodel.Models._
 import optrak.lagomtest.datamodel.ModelsJson._
 import play.api.libs.json.{Format, Json}
   /**

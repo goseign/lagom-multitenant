@@ -8,17 +8,11 @@ import optrak.lagomtest.datamodel.Models._
 import optrak.lagomtest.model.impl.ModelCommands._
 import optrak.lagomtest.model.api.ModelEvents._
 import play.api.libs.json.{Format, Json}
-
+import optrak.lagomtest.model.impl.ModelEntityExceptions._
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
   */
-
-case class ModelAlreadyExistsException(modelDescription: ModelDescription) extends TransportException(TransportErrorCode.UnsupportedData, s"model $modelDescription already exists")
-case class ProductAlreadyDefinedException(productId: ProductId, modelId: ModelId) extends TransportException(TransportErrorCode.UnsupportedData, s"product $productId already defined in model $modelId")
-case class ProductNotDefinedException(productId: ProductId, modelId: ModelId) extends TransportException(TransportErrorCode.UnsupportedData, s"product $productId nod defined in model $modelId")
-case class SiteAlreadyDefinedException(siteId: SiteId, modelId: ModelId) extends TransportException(TransportErrorCode.UnsupportedData, s"site $siteId already defined in model $modelId")
-case class SiteNotDefinedException(siteId: SiteId, modelId: ModelId) extends TransportException(TransportErrorCode.UnsupportedData, s"site $siteId nod defined in model $modelId")
 
 class ModelEntity extends PersistentEntity {
 

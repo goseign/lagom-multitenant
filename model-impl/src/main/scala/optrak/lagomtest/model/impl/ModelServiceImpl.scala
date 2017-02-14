@@ -61,7 +61,7 @@ class ModelServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) exten
     toModel(modelId, RemoveSite)
 
 
-  override def modelTopic(): Topic[ModelEvents.ModelEvent] = TopicProducer.taggedStreamWithOffset(ModelEvent.Tag.allTags.toList) { (tag, offset) =>
+  override def modelEvents(): Topic[ModelEvents.ModelEvent] = TopicProducer.taggedStreamWithOffset(ModelEvent.Tag.allTags.toList) { (tag, offset) =>
     persistentEntityRegistry.eventStream(tag, offset).map(t => (t.event, offset))
   }
 

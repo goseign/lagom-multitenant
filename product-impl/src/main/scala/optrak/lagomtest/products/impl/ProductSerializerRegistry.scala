@@ -1,6 +1,9 @@
 package optrak.lagomtest.products.impl
 
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
+import optrak.lagomtest.datamodel.Models.Product
+import optrak.lagomtest.products.impl.ProductEvents._
+import optrak.lagomtest.datamodel.ModelsJson._
 
 import scala.collection.immutable.Seq
 
@@ -13,15 +16,15 @@ object ProductSerializerRegistry extends JsonSerializerRegistry {
   override def serializers: Seq[JsonSerializer[_]] = {
     val res = Seq(
       JsonSerializer[CreateProduct],
-      JsonSerializer[CreateModel],
+      JsonSerializer[UpdateProductSize],
+      JsonSerializer[UpdateProductGroup],
+      JsonSerializer[CancelProduct],
+      JsonSerializer[GetProduct.type],
+      JsonSerializer[Product],
       JsonSerializer[ProductCreated],
-      JsonSerializer[ModelCreated],
-      JsonSerializer[ApiCreateProduct],
-      JsonSerializer[ApiCreateModel],
-      JsonSerializer[ApiModelCreated],
-      JsonSerializer[ApiRemoveModel],
-      JsonSerializer[RemoveModel],
-      JsonSerializer[ModelRemoved]
+      JsonSerializer[ProductSizeUpdated],
+      JsonSerializer[ProductGroupUpdated],
+      JsonSerializer[ProductCancelled]
 
     )
     res

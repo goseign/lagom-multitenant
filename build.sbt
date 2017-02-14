@@ -56,7 +56,35 @@ lazy val `product-impl` = (project in file("product-impl"))
   .dependsOn(`product-api`)
 
 
-lazy val `client-api` = (project in file("client-api"))
+lazy val `model-reader-api` = (project in file("model-reader-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslApi
+    )
+  ).dependsOn(`datamodel`)
+  .dependsOn(`model-api`)
+
+lazy val `model-reader-impl` = (project in file("model-reader-impl"))
+  .enablePlugins(LagomScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslTestKit,
+      lagomScaladslKafkaBroker,
+      macwire,
+      scalaTest
+    )
+  )
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
+  .dependsOn(`model-api`)
+  .dependsOn(`model-reader-api`)
+  .dependsOn(`model-impl` % "test")
+
+
+lazy val `tenant-api` = (project in file("tenant-api"))
   .settings(
     libraryDependencies ++= Seq(
       lagomScaladslPersistenceCassandra,
@@ -66,7 +94,7 @@ lazy val `client-api` = (project in file("client-api"))
   ).dependsOn(`datamodel`)
   .dependsOn(`utils`)
 
-lazy val `client-impl` = (project in file("client-impl"))
+lazy val `tenant-impl` = (project in file("tenant-impl"))
   .enablePlugins(LagomScala)
   .settings(
     libraryDependencies ++= Seq(
@@ -82,7 +110,7 @@ lazy val `client-impl` = (project in file("client-impl"))
   .settings(lagomForkedTestSettings: _*)
   .dependsOn(`datamodel`)
   .dependsOn(`utils`)
-  .dependsOn(`client-api`)
+  .dependsOn(`tenant-api`)
 
 
 lazy val `datamodel` = (project in file("datamodel"))
@@ -107,3 +135,16 @@ lazy val `utils` = (project in file("utils"))
     )
   )
   .settings(lagomForkedTestSettings: _*)
+
+lazy val `integration` = (project in file("integration"))
+  .enablePlugins(LagomScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      macwire
+    )
+
+  )
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`model-impl` % "test")
+  .dependsOn(`model-reader-impl` % "test")
+

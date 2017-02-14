@@ -14,6 +14,6 @@ object ModelsJson {
   implicit val formatModel: Format[Model] = Json.format[Model]
   implicit val formatModelDescipriotn: Format[ModelDescription] = Json.format[ModelDescription]
 
-  implicit val formatClient: Format[Client] = Json.format[Client]
+  implicit val formatClient: Format[Tenant] = Json.format[Tenant]
 
 }

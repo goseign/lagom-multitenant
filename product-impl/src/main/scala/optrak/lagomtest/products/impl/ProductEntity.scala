@@ -6,6 +6,7 @@ import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import optrak.lagomtest.datamodel.Models._
 import optrak.lagomtest.products.impl.ProductEvents._
+import optrak.lagomtest.utils.JsonFormats
 import play.api.libs.json.{Format, Json}
 /**
   * Created by tim on 21/01/17.
@@ -49,7 +50,7 @@ class ProductEntity extends PersistentEntity {
 
   def hasProduct: Actions = {
     Actions()
-      .onCommand[ProductCommand, Done] {
+      .onCommand[ProductDoCommand, Done] {
       case (UpdateProductSize(clientId, id, newSize), ctx, _) =>
         ctx.thenPersist(ProductSizeUpdated(clientId, id, newSize))(_ =>
           ctx.reply(Done))
@@ -59,6 +60,9 @@ class ProductEntity extends PersistentEntity {
       case (CancelProduct(clientId, id), ctx, _) =>
         ctx.thenPersist(ProductCancelled(clientId, id))(_ =>
           ctx.reply(Done))
+    }.onReadOnlyCommand[GetProduct.type, Product]{
+      case (GetProduct, ctx, state) =>
+        ctx.reply(state.get)
     }.onEvent {
       // Event handler for the ProductChanged event
       case (ProductSizeUpdated(clientId, id, newSize), Some(product)) =>
@@ -72,11 +76,18 @@ class ProductEntity extends PersistentEntity {
 }
 
 // --------------------------------- internal commands
-sealed trait ProductCommand extends ReplyType[Done]
-case class CreateProduct(clientId: ClientId, id: String, size: Int, group: String) extends ProductCommand 
-case class UpdateProductSize(clientId: ClientId, id: String, newSize: Int) extends ProductCommand 
-case class UpdateProductGroup(clientId: ClientId, id: String, newGroup: String) extends ProductCommand 
-case class CancelProduct(clientId: ClientId, id: String) extends ProductCommand 
+
+sealed trait ProductCommand
+
+sealed trait ProductDoCommand extends ProductCommand with ReplyType[Done]
+case class CreateProduct(clientId: TenantId, id: String, size: Int, group: String) extends ProductDoCommand
+case class UpdateProductSize(clientId: TenantId, id: String, newSize: Int) extends ProductDoCommand
+case class UpdateProductGroup(clientId: TenantId, id: String, newGroup: String) extends ProductDoCommand
+case class CancelProduct(clientId: TenantId, id: String) extends ProductDoCommand
+
+case object GetProduct extends ProductCommand with ReplyType[Product] {
+  implicit def format: Format[GetProduct.type] = JsonFormats.singletonFormat(GetProduct)
+}
 
 object CreateProduct {
   implicit def format: Format[CreateProduct] = Json.format[CreateProduct]

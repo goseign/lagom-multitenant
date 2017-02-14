@@ -3,7 +3,7 @@ package optrak.lagomtest.products.impl
 import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag}
-import optrak.lagomtest.datamodel.Models.{ClientId, ModelId}
+import optrak.lagomtest.datamodel.Models.{TenantId, ModelId}
 import play.api.libs.json.{Format, Json}
 
 /**
@@ -22,10 +22,10 @@ object ProductEvents {
     val Tag = AggregateEventTag.sharded[ProductEvent](NumShards)
   }
 
-  case class ProductCreated(clientId: ClientId, id: String, size: Int, group: String) extends ProductEvent
-  case class ProductSizeUpdated(clientId: ClientId, id: String, newSize: Int) extends ProductEvent
-  case class ProductGroupUpdated(clientId: ClientId, id: String, newGroup: String) extends ProductEvent
-  case class ProductCancelled(clientId: ClientId, id: String) extends ProductEvent
+  case class ProductCreated(clientId: TenantId, id: String, size: Int, group: String) extends ProductEvent
+  case class ProductSizeUpdated(clientId: TenantId, id: String, newSize: Int) extends ProductEvent
+  case class ProductGroupUpdated(clientId: TenantId, id: String, newGroup: String) extends ProductEvent
+  case class ProductCancelled(clientId: TenantId, id: String) extends ProductEvent
 
   object ProductCreated {
     implicit def format: Format[ProductCreated] = Json.format[ProductCreated]

@@ -94,13 +94,13 @@ extends ReadSideProcessor[ProductEvent] {
   }
 
   // again copy pattern from item repository
-  private def insertProduct(clientId: ClientId,productId: ProductId, cancelled: Boolean) = {
+  private def insertProduct(clientId: TenantId, productId: ProductId, cancelled: Boolean) = {
     println(s"insertProduct $clientId")
     Future.successful(List(insertProductStatement.bind(clientId, productId, new java.lang.Boolean(cancelled))))
   }
 
   // again copy pattern from item repository
-  private def cancelProduct(clientId: ClientId,productId: ProductId) = {
+  private def cancelProduct(clientId: TenantId, productId: ProductId) = {
     println(s"insertProduct $clientId")
     Future.successful(List(cancelProductStatement.bind(clientId, productId, java.lang.Boolean.TRUE)))
   }

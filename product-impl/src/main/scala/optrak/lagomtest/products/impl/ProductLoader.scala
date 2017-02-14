@@ -6,7 +6,7 @@ import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
 import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
-import optrak.lagom.products.api.ProductService
+import optrak.lagomtest.products.api.ProductService
 import play.api.Environment
 import play.api.libs.ws.ahc.AhcWSComponents
 

@@ -10,7 +10,7 @@ import com.datastax.driver.core.utils.UUIDs
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.{ServiceTest, TestTopicComponents}
 import optrak.lagomtest.datamodel.Models.{ModelDescription, Product}
-import optrak.lagomtest.model.api.ModelEvents.ModelCreated
+import optrak.lagomtest.model.api.ModelEvents._
 import optrak.lagomtest.model.api.ModelService
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 
@@ -37,7 +37,7 @@ class ModelEventStreamTest extends AsyncWordSpec with Matchers with BeforeAndAft
     "create model" in {
       for {
         answer <- modelService.createModel(modelId).invoke("my model")
-        event <- modelService.modelTopic.subscribe.atMostOnceSource
+        event <- modelService.modelEvents.subscribe.atMostOnceSource
           .runWith(Sink.head)
       } yield {
         answer should === (Done)
@@ -48,16 +48,20 @@ class ModelEventStreamTest extends AsyncWordSpec with Matchers with BeforeAndAft
     "add product" in {
       for {
         answer <- modelService.addProduct(modelId).invoke(product1)
+        event <- modelService.modelEvents.subscribe.atMostOnceSource.take(2).runWith(Sink.last)
       } yield {
         answer should === (Done)
+        event should === (ProductUpdated(modelId, product1))
       }
     }
 
     "removed model" in {
       for {
         answer <- modelService.removeProduct(modelId).invoke(product1.id)
+        event <- modelService.modelEvents.subscribe.atMostOnceSource.take(3).runWith(Sink.last)
       } yield {
         answer should === (Done)
+        event should === (ProductRemoved(modelId, product1.id))
       }
     }
   }

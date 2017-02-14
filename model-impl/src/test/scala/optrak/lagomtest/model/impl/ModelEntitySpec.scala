@@ -8,7 +8,7 @@ import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
 import optrak.lagomtest.datamodel.Models._
 import optrak.lagomtest.datamodel.impl.{ModelEntity, ModelSerializerRegistry}
-import optrak.lagomtest.model.impl.ModelCommands._
+import ModelCommands._
 import optrak.lagomtest.model.api.ModelEvents._
 import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
 

@@ -75,14 +75,14 @@ trait ModelService extends Service {
 
 
     ).withTopics(
-      topic(ModelService.topicName, modelTopic)
+      topic(ModelService.topicName, modelEvents)
       .addProperty(KafkaProperties.partitionKeyStrategy,
       PartitionKeyStrategy[ModelEvent](_.modelId.toString))
     )
     .withAutoAcl(true)
 
   }
-  def modelTopic() : Topic[ModelEvent]
+  def modelEvents() : Topic[ModelEvent]
 
 }
 
