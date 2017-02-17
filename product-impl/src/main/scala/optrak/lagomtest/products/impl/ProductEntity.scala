@@ -14,7 +14,8 @@ import play.api.libs.json.{Format, Json}
   */
 
 
-case class ProductAlreadyExistsException(tenantId: TenantId) extends TransportException(TransportErrorCode.UnsupportedData, s"tenant $tenantId already exists")
+case class ProductAlreadyExistsException(tenantId: TenantId, productId: ProductId)
+  extends TransportException(TransportErrorCode.UnsupportedData, s"product $productId for tenant $tenantId already exists")
 
 class ProductEntity extends PersistentEntity {
 
@@ -53,19 +54,21 @@ class ProductEntity extends PersistentEntity {
 
   def hasProduct: Actions = {
     Actions()
-      .onCommand[ProductDoCommand, Done] {
+      .onCommand[CreateProduct, Done] {
+      case (CreateProduct(tenantId, id, size, group), ctx, _) =>
+        throw new ProductAlreadyExistsException(tenantId, id)
+    }.onCommand[UpdateProductSize, Done] {
       case (UpdateProductSize(tenantId, id, newSize), ctx, _) =>
         ctx.thenPersist(ProductSizeUpdated(tenantId, id, newSize))(_ =>
           ctx.reply(Done))
+    }.onCommand[UpdateProductGroup, Done] {
       case (UpdateProductGroup(tenantId, id, newGroup), ctx, _) =>
         ctx.thenPersist(ProductGroupUpdated(tenantId, id, newGroup))(_ =>
           ctx.reply(Done))
+    }.onCommand[CancelProduct, Done] {
       case (CancelProduct(tenantId, id), ctx, _) =>
         ctx.thenPersist(ProductCancelled(tenantId, id))(_ =>
           ctx.reply(Done))
-      case (CreateProduct(tenantId, id, size, group), ctx, _) =>
-        throw new ProductAlreadyExistsException(tenantId, id)
-      )
     }.onReadOnlyCommand[GetProduct.type, Product]{
       case (GetProduct, ctx, state) =>
         ctx.reply(state.get)

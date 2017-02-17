@@ -56,7 +56,7 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       })
       exp.map { te =>
         // println(s"te is code ${te.errorCode} message ${te.exceptionMessage}")
-        te.toString should include("tim already exists")
+        te.toString should include("product product1 for tenant tenant1 already exists")
       }
     }
 
@@ -79,7 +79,7 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
         seq <- Future.sequence(productsCreated)
         allProducts <- client.getProductsForTenant(tenantId).invoke()
       } yield {
-        val ap: List[ProductStatus] = allProducts
+        val ap: Seq[ProductStatus] = allProducts
 
         products.foreach { p =>
           val found = ap.find(_.productId == p._1)
@@ -106,7 +106,7 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
         seq <- Future.sequence(productsCreated)
         allProducts <- client.getProductsForTenant(tenantId).invoke()
       } yield {
-        val ap: List[ProductStatus] = allProducts
+        val ap: Seq[ProductStatus] = allProducts
 
         products.foreach { p =>
           val found = ap.find(_.productId == p._1)

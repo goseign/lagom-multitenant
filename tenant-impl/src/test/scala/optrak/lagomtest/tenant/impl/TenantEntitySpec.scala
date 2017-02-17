@@ -51,6 +51,7 @@ class TenantEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll wit
       outcome.state === Some(Tenant(tenantId, Set(ModelDescription(modelId, "nice model")), "hello"))
     }
 
+
     "remove model" in withTestDriver { driver =>
       val outcome1 = driver.run(CreateTenant(tenantId, "hello"))
       val outcome2 = driver.run(CreateModel(modelId, "nice model"))

@@ -37,9 +37,12 @@ class ProductServiceImpl(persistentEntityRegistry: PersistentEntityRegistry, pro
     ref(tenantId, id).ask(GetProduct)
   }
 
-  override def getProductsForTenant(tenant: TenantId): ServiceCall[NotUsed, List[ProductStatus]] = ???
+  override def getProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, Seq[ProductStatus]] = ServiceCall { _ =>
+    productRepository.selectProductsForTenant(tenantId)
+  }
 
-  override def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, List[ProductId]] = ???
-
+  override def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, Seq[ProductId]] = ServiceCall { _ =>
+    productRepository.selectLiveProductsForTenant(tenantId)
+  }
 }
 

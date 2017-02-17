@@ -44,16 +44,41 @@ class ProductEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll wi
       outcome.replies === Vector(Done)
       outcome.events should contain(ProductCreated(tenantId, product1Id, product1Size, group1))
       outcome.state === Some(product1)
-
     }
+
+    "fail on creation of Product twice" in withTestDriver { driver =>
+      val outcome = driver.run(CreateProduct(tenantId, product1Id, product1Size, group1))
+      a [ProductAlreadyExistsException] should be thrownBy driver.run(CreateProduct(tenantId, product1Id, product1Size, group1))
+    }
+
 
     "get back created product" in withTestDriver { driver =>
       driver.run(CreateProduct(tenantId, product1Id, product1Size, group1))
       val outcome = driver.run(GetProduct)
       outcome.replies === Vector(product1)
-
-
     }
+
+    "change size" in withTestDriver { driver =>
+      driver.run(CreateProduct(tenantId, product1Id, product1Size, group1))
+      driver.run(UpdateProductSize(tenantId, product1Id, 9))
+      val outcome = driver.run(GetProduct)
+      outcome.replies === Vector(product1sz9)
+    }
+
+    "change group" in withTestDriver { driver =>
+      driver.run(CreateProduct(tenantId, product1Id, product1Size, group1))
+      driver.run(UpdateProductGroup(tenantId, product1Id, group2))
+      val outcome = driver.run(GetProduct)
+      outcome.replies === Vector(product1g2)
+    }
+
+    "cancel product" in withTestDriver { driver =>
+      driver.run(CreateProduct(tenantId, product1Id, product1Size, group1))
+      driver.run(CancelProduct(tenantId, product1Id))
+      val outcome = driver.run(GetProduct)
+      outcome.replies === Vector(product1Cancelled)
+    }
+
 
 
 

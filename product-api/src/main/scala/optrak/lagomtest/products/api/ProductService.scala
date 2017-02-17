@@ -28,9 +28,9 @@ trait ProductService extends Service {
 
   def cancelProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Done]
 
-  def getProductsForTenant(tenant: TenantId): ServiceCall[NotUsed, List[ProductStatus]]
+  def getProductsForTenant(tenant: TenantId): ServiceCall[NotUsed, Seq[ProductStatus]]
 
-  def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, List[ProductId]]
+  def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, Seq[ProductId]]
 
 
   override final def descriptor = {
@@ -41,6 +41,8 @@ trait ProductService extends Service {
       pathCall("/optrak.lagom.products.api/:tenant/group/:id/:newGroup", updateGroup _),
       pathCall("/optrak.lagom.products.api/:tenant/create/:id", createProduct _),
       pathCall("/optrak.lagom.products.api/:tenant/product/:id", getProduct _ ),
+      pathCall("/optrak.lagom.products.api/:tenant/products", getProductsForTenant _ ),
+      pathCall("/optrak.lagom.products.api/:tenant/liveProducts", getLiveProductsForTenant _ ),
       pathCall("/optrak.lagom.products.api/:tenant/cancel/:id", cancelProduct _ )
     ).withAutoAcl(true)
   }
