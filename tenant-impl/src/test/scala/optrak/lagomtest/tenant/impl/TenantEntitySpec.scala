@@ -22,11 +22,11 @@ class TenantEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll wit
     TestKit.shutdownActorSystem(system)
   }
 
-  val clientId = "client1"
+  val tenantId = "tenant1"
   val modelId = UUIDs.timeBased()
 
   private def withTestDriver[T](block: PersistentEntityTestDriver[TenantCommand, TenantEvent, Option[Tenant]] => T): T = {
-    val driver = new PersistentEntityTestDriver(system, new TenantEntity, clientId)
+    val driver = new PersistentEntityTestDriver(system, new TenantEntity, tenantId)
     try {
       block(driver)
     } finally {
@@ -37,39 +37,39 @@ class TenantEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll wit
   "Tenant entity" should {
 
     "allow creation of Tenant" in withTestDriver { driver =>
-      val outcome = driver.run(CreateTenant(clientId, "hello"))
+      val outcome = driver.run(CreateTenant(tenantId, "hello"))
       outcome.replies === Vector(Done)
-      outcome.events should contain(TenantCreated(clientId, "hello"))
-      outcome.state === Some(Tenant(clientId, Set.empty, "hello"))
+      outcome.events should contain(TenantCreated(tenantId, "hello"))
+      outcome.state === Some(Tenant(tenantId, Set.empty, "hello"))
     }
 
     "create model" in withTestDriver { driver =>
-      val outcome1 = driver.run(CreateTenant(clientId, "hello"))
+      val outcome1 = driver.run(CreateTenant(tenantId, "hello"))
       val outcome = driver.run(CreateModel(modelId, "nice model"))
       outcome.replies === Vector(ApiModelCreated(modelId))
       outcome.events should contain(ModelCreated(modelId, "nice model"))
-      outcome.state === Some(Tenant(clientId, Set(ModelDescription(modelId, "nice model")), "hello"))
+      outcome.state === Some(Tenant(tenantId, Set(ModelDescription(modelId, "nice model")), "hello"))
     }
 
     "remove model" in withTestDriver { driver =>
-      val outcome1 = driver.run(CreateTenant(clientId, "hello"))
+      val outcome1 = driver.run(CreateTenant(tenantId, "hello"))
       val outcome2 = driver.run(CreateModel(modelId, "nice model"))
 
       val outcome = driver.run(RemoveModel(modelId))
       outcome.replies === Vector(Done)
       outcome.events should contain(ModelRemoved(modelId))
-      outcome.state === Some(Tenant(clientId, Set.empty, "hello"))
+      outcome.state === Some(Tenant(tenantId, Set.empty, "hello"))
     }
 
     "remove model twice does not complain" in withTestDriver { driver =>
-      val outcome1 = driver.run(CreateTenant(clientId, "hello"))
+      val outcome1 = driver.run(CreateTenant(tenantId, "hello"))
       val outcome2 = driver.run(CreateModel(modelId, "nice model"))
 
       val outcome3 = driver.run(RemoveModel(modelId))
       val outcome = driver.run(RemoveModel(modelId))
       outcome.replies === Vector(Done)
       outcome.events should contain(ModelRemoved(modelId))
-      outcome.state === Some(Tenant(clientId, Set.empty, "hello"))
+      outcome.state === Some(Tenant(tenantId, Set.empty, "hello"))
     }
 
 

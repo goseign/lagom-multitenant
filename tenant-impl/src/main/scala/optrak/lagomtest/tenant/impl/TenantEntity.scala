@@ -15,7 +15,7 @@ import optrak.lagomtest.tenant.api
   * Copyright Tim Pigden, Hertford UK
   */
 
-case class TenantAlreadyExistsException(clientId: TenantId) extends TransportException(TransportErrorCode.UnsupportedData, s"client $clientId already exists")
+case class TenantAlreadyExistsException(tenantId: TenantId) extends TransportException(TransportErrorCode.UnsupportedData, s"tentant $tenantId already exists")
 
 class TenantEntity extends PersistentEntity {
 
@@ -69,10 +69,10 @@ class TenantEntity extends PersistentEntity {
 
     }.onEvent {
       // Event handler for the TenantChanged event
-      case (ModelCreated(id, description), Some(client)) =>
-        Some(client.copy(models = client.models + ModelDescription(id, description)))
-      case (ModelRemoved(id: ModelId), Some(client)) =>
-        Some(client.copy(models = client.models.filterNot(_.id == id)))
+      case (ModelCreated(id, description), Some(tenant)) =>
+        Some(tenant.copy(models = tenant.models + ModelDescription(id, description)))
+      case (ModelRemoved(id: ModelId), Some(tenant)) =>
+        Some(tenant.copy(models = tenant.models.filterNot(_.id == id)))
     }
   }
 }

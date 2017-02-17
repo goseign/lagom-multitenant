@@ -8,7 +8,7 @@ import play.api.libs.json.{Format, Json}
   * Copyright Tim Pigden, Hertford UK
   */
 object TenantEvents {
-  // nb the client event needs to be aggregateEvent because it is used by read processor and needs an aggregate tag
+  // nb the tenant event needs to be aggregateEvent because it is used by read processor and needs an aggregate tag
   sealed trait TenantEvent extends AggregateEvent[TenantEvent] {
       override def aggregateTag = TenantEvent.Tag
   }

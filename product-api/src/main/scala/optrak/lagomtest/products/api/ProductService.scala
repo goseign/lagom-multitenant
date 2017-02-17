@@ -12,7 +12,7 @@ import optrak.lagomtest.datamodel.ModelsJson._
   * Copyright Tim Pigden, Hertford UK
   *
   * the tenant for whom we are managing the products
-  * product id - nb externally defined so 2 clients could have different products with same id.
+  * product id - nb externally defined so 2 tenants could have different products with same id.
   *
   * Refer to datamodel for description of data model
   */
@@ -37,11 +37,11 @@ trait ProductService extends Service {
     import Service._
 
     named("product").withCalls(
-      pathCall("/optrak.lagom.products.api/:client/size/:id/:newSize", updateSize _),
-      pathCall("/optrak.lagom.products.api/:client/group/:id/:newGroup", updateGroup _),
-      pathCall("/optrak.lagom.products.api/:client/create/:id", createProduct _),
-      pathCall("/optrak.lagom.products.api/:client/product/:id", getProduct _ ),
-      pathCall("/optrak.lagom.products.api/:client/cancel/:id", cancelProduct _ )
+      pathCall("/optrak.lagom.products.api/:tenant/size/:id/:newSize", updateSize _),
+      pathCall("/optrak.lagom.products.api/:tenant/group/:id/:newGroup", updateGroup _),
+      pathCall("/optrak.lagom.products.api/:tenant/create/:id", createProduct _),
+      pathCall("/optrak.lagom.products.api/:tenant/product/:id", getProduct _ ),
+      pathCall("/optrak.lagom.products.api/:tenant/cancel/:id", cancelProduct _ )
     ).withAutoAcl(true)
   }
 

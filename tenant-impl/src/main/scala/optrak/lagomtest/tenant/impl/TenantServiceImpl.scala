@@ -13,28 +13,28 @@ import optrak.lagomtest.tenant.api.{ModelCreated, TenantService}
   * Created by tim on 26/01/17.
   * Copyright Tim Pigden, Hertford UK
   */
-class TenantServiceImpl(persistentEntityRegistry: PersistentEntityRegistry, clientRepository: TenantRepository) extends TenantService {
+class TenantServiceImpl(persistentEntityRegistry: PersistentEntityRegistry, tenantRepository: TenantRepository) extends TenantService {
 
-  override def createTenant(clientId: TenantId): ServiceCall[tenant.api.TenantCreationData, Done] = ServiceCall { request =>
-    val ref = persistentEntityRegistry.refFor[TenantEntity](clientId)
-    ref.ask(CreateTenant(clientId, request.description))
+  override def createTenant(tenantId: TenantId): ServiceCall[tenant.api.TenantCreationData, Done] = ServiceCall { request =>
+    val ref = persistentEntityRegistry.refFor[TenantEntity](tenantId)
+    ref.ask(CreateTenant(tenantId, request.description))
   }
 
-  override def createModel(clientId: TenantId): ServiceCall[tenant.api.ModelCreationData, ModelCreated] = ServiceCall { request =>
-    val ref = persistentEntityRegistry.refFor[TenantEntity](clientId)
+  override def createModel(tenantId: TenantId): ServiceCall[tenant.api.ModelCreationData, ModelCreated] = ServiceCall { request =>
+    val ref = persistentEntityRegistry.refFor[TenantEntity](tenantId)
     val uuid = UUIDs.timeBased()
     ref.ask(CreateModel(uuid, request.description))
   }
 
-  override def removeModel(clientId: TenantId, modelId: ModelId): ServiceCall[NotUsed, Done] = ServiceCall { request =>
-    val ref = persistentEntityRegistry.refFor[TenantEntity](clientId)
+  override def removeModel(tenantId: TenantId, modelId: ModelId): ServiceCall[NotUsed, Done] = ServiceCall { request =>
+    val ref = persistentEntityRegistry.refFor[TenantEntity](tenantId)
     ref.ask(RemoveModel(modelId))
   }
 
-  override def getTenant(clientId: TenantId): ServiceCall[NotUsed, Models.Tenant] = ???
+  override def getTenant(tenantId: TenantId): ServiceCall[NotUsed, Models.Tenant] = ???
 
   override def getAllTenants: ServiceCall[NotUsed, Seq[TenantId]] = ServiceCall { _ =>
-    clientRepository.selectAllTenants
+    tenantRepository.selectAllTenants
   }
 
 

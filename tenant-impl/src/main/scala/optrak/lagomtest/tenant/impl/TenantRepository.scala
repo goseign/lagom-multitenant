@@ -13,18 +13,18 @@ import scala.concurrent.{ExecutionContext, Future}
   * Created by tim on 28/01/17.
   * Copyright Tim Pigden, Hertford UK
   *
-  * objective of this repository is to hold list of all created clients
+  * objective of this repository is to hold list of all created tenants
   *
   * We follow the example in online-auction item repository, separating out the actual getting of the data
-  * from read processor listening to the add client messages
+  * from read processor listening to the add tenant messages
   */
 class TenantRepository(session: CassandraSession)(implicit ec: ExecutionContext) {
 
   def selectAllTenants: Future[Seq[TenantId]] = {
     session.selectAll(
       """
-        | select * from clients
-      """.stripMargin).map( rows => rows.map(_.getString("clientId")))
+        | select * from tenants
+      """.stripMargin).map( rows => rows.map(_.getString("tenantId")))
   }
 
 
@@ -48,15 +48,15 @@ extends ReadSideProcessor[TenantEvent] {
   private def createTables() = {
     for {
       _ <- session.executeCreateTable("""
-        CREATE TABLE IF NOT EXISTS clients (
-          clientId text PRIMARY KEY
+        CREATE TABLE IF NOT EXISTS tenants (
+          tenantId text PRIMARY KEY
         )
       """)
     } yield Done
   }
 
   override def buildHandler(): ReadSideProcessor.ReadSideHandler[TenantEvent] = {
-    readSide.builder[TenantEvent]("clientRepositoryOffset")
+    readSide.builder[TenantEvent]("tenantRepositoryOffset")
     .setGlobalPrepare(createTables)
     .setPrepare(_ => prepareStatements())
     .setEventHandler[TenantCreated](e => insertTenantId(e.event.id))
@@ -71,7 +71,7 @@ extends ReadSideProcessor[TenantEvent] {
     for {
       insertTenantId <- session.prepare(
         """
-          | Insert into clients(clientId) values (?)
+          | Insert into tenants(tenantId) values (?)
         """.stripMargin)
     } yield {
       insertTenantIdStatement = insertTenantId
@@ -80,9 +80,9 @@ extends ReadSideProcessor[TenantEvent] {
   }
 
   // again copy pattern from item repository
-  private def insertTenantId(clientId: TenantId) = {
-    println(s"insertTenantId $clientId")
-    Future.successful(List(insertTenantIdStatement.bind(clientId)))
+  private def insertTenantId(tenantId: TenantId) = {
+    println(s"insertTenantId $tenantId")
+    Future.successful(List(insertTenantIdStatement.bind(tenantId)))
   }
 
 

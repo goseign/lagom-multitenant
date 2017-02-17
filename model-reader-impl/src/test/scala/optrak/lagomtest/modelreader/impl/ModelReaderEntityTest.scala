@@ -26,7 +26,7 @@ class ModelReaderEntityTest extends WordSpec with Matchers with BeforeAndAfterAl
     override def serializers: Seq[JsonSerializer[_]] = ModelReaderSerializerRegistry.serializers ++ ModelSerializerRegistry.serializers
   }
 
-  private val system = ActorSystem("ClientEntitySpec", JsonSerializerRegistry.actorSystemSetupFor(TestRegistry))
+  private val system = ActorSystem("TenantEntitySpec", JsonSerializerRegistry.actorSystemSetupFor(TestRegistry))
 
 //  private val system = ActorSystem("ModelReaderEntitySpec", setups)
 
@@ -50,7 +50,7 @@ class ModelReaderEntityTest extends WordSpec with Matchers with BeforeAndAfterAl
     }
   }
 
-  "Client entity" should {
+  "Tenant entity" should {
 
     "allow creation of model" in withTestDriver { driver =>
       val outcome = driver.run(WrappedModelEvent(ModelCreated(modelDescription)))

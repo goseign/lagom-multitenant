@@ -24,28 +24,28 @@ class TenantEventProcessorSpec extends AsyncWordSpec with BeforeAndAfterAll with
   override def afterAll() = server.stop()
 
   private val testDriver = server.application.readSide
-  private val clientRepository = server.application.clientRepository
+  private val tenantRepository = server.application.tenantRepository
   private val offset = new AtomicInteger()
 
 
-  "The client event processor" should {
-    "create a client" in {
-      val clientCreated = TenantCreated("tim", "hello")
+  "The tenant event processor" should {
+    "create a tenant" in {
+      val tenantCreated = TenantCreated("tim", "hello")
       for {
-        _ <- feed(clientCreated.id, clientCreated)
-        clients <- getTenants
+        _ <- feed(tenantCreated.id, tenantCreated)
+        tenants <- getTenants
       } yield {
-        clients should contain only clientCreated.id
+        tenants should contain only tenantCreated.id
       }
     }
 
   }
 
   private def getTenants = {
-    clientRepository.selectAllTenants
+    tenantRepository.selectAllTenants
   }
 
-  private def feed(clientId: TenantId, event: TenantEvent) = {
-    testDriver.feed(clientId.toString, event, Sequence(offset.getAndIncrement))
+  private def feed(tenantId: TenantId, event: TenantEvent) = {
+    testDriver.feed(tenantId.toString, event, Sequence(offset.getAndIncrement))
   }
 }

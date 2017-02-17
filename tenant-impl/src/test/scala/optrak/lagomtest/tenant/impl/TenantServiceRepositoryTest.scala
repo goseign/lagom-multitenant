@@ -25,17 +25,17 @@ class TenantServiceRepositoryTest extends AsyncWordSpec with Matchers with Befor
 
   override protected def afterAll() = server.stop()
 
-  val clientId = "tim"
+  val tenantId = "tim"
 
-  def doCreate(clientId: String): Future[Done] = {
-    val fDone: Future[Done] = client.createTenant(clientId).invoke(TenantCreationData("my client"))
+  def doCreate(tenantId: String): Future[Done] = {
+    val fDone: Future[Done] = client.createTenant(tenantId).invoke(TenantCreationData("my tenant"))
     fDone
   }
 
 
-  "client service" should {
+  "tenant service" should {
 
-    "create client" in {
+    "create tenant" in {
 
       doCreate("tim")
       doCreate("tom")

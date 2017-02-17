@@ -23,7 +23,7 @@ trait TenantComponents extends LagomServerComponents
     bindService[TenantService].to(wire[TenantServiceImpl])
   )
 
-  lazy val clientRepository = wire[TenantRepository]
+  lazy val tenantRepository = wire[TenantRepository]
 
   def environment: Environment
 

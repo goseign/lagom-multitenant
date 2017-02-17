@@ -33,7 +33,9 @@ class ProductServiceImpl(persistentEntityRegistry: PersistentEntityRegistry, pro
     ref(tenantId, id).ask(CancelProduct(tenantId, id))
   }
 
-  override def getProduct(tenantId: TenantId, id: ProductId): ServiceCall[NotUsed, Product] = ???
+  override def getProduct(tenantId: TenantId, id: ProductId): ServiceCall[NotUsed, Product] = ServiceCall { request =>
+    ref(tenantId, id).ask(GetProduct)
+  }
 
   override def getProductsForTenant(tenant: TenantId): ServiceCall[NotUsed, List[ProductStatus]] = ???
 

@@ -13,13 +13,13 @@ import optrak.lagomtest.datamodel.ModelsJson._
   */
 trait TenantService extends Service {
 
-  def createTenant(clientId: TenantId): ServiceCall[TenantCreationData, Done]
+  def createTenant(tenantId: TenantId): ServiceCall[TenantCreationData, Done]
 
-  def createModel(clientId: TenantId): ServiceCall[ModelCreationData, ModelCreated]
+  def createModel(tenantId: TenantId): ServiceCall[ModelCreationData, ModelCreated]
 
-  def removeModel(clientId: TenantId, modelId: ModelId): ServiceCall[NotUsed, Done]
+  def removeModel(tenantId: TenantId, modelId: ModelId): ServiceCall[NotUsed, Done]
 
-  def getTenant(clientId: TenantId): ServiceCall[NotUsed, Tenant]
+  def getTenant(tenantId: TenantId): ServiceCall[NotUsed, Tenant]
 
   def getAllTenants: ServiceCall[NotUsed, Seq[TenantId]]
 
@@ -29,9 +29,9 @@ trait TenantService extends Service {
     named("product").withCalls(
       pathCall("/optrak.model.api/createTenant/:id", createTenant _),
       pathCall("/optrak.model.api/createModel/:id", createModel _),
-      pathCall("/optrak.model.api/removeModel/:clientId/:modelId", removeModel _),
-      pathCall("/optrak.model.api/client/:id", getTenant _),
-      pathCall("/optrak.model.api/client", getAllTenants _)
+      pathCall("/optrak.model.api/removeModel/:tenantId/:modelId", removeModel _),
+      pathCall("/optrak.model.api/tenant/:id", getTenant _),
+      pathCall("/optrak.model.api/tenant", getAllTenants _)
 
     ).withAutoAcl(true)
   }

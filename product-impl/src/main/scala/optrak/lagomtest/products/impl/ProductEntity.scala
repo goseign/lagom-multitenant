@@ -13,6 +13,9 @@ import play.api.libs.json.{Format, Json}
   * Copyright Tim Pigden, Hertford UK
   */
 
+
+case class ProductAlreadyExistsException(tenantId: TenantId) extends TransportException(TransportErrorCode.UnsupportedData, s"tenant $tenantId already exists")
+
 class ProductEntity extends PersistentEntity {
 
   override type Command = ProductCommand
@@ -60,6 +63,9 @@ class ProductEntity extends PersistentEntity {
       case (CancelProduct(tenantId, id), ctx, _) =>
         ctx.thenPersist(ProductCancelled(tenantId, id))(_ =>
           ctx.reply(Done))
+      case (CreateProduct(tenantId, id, size, group), ctx, _) =>
+        throw new ProductAlreadyExistsException(tenantId, id)
+      )
     }.onReadOnlyCommand[GetProduct.type, Product]{
       case (GetProduct, ctx, state) =>
         ctx.reply(state.get)

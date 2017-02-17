@@ -24,24 +24,24 @@ class TenantServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndA
 
   override protected def afterAll() = server.stop()
 
-  val clientId = "tim"
+  val tenantId = "tim"
 
 
-  "client service" should {
+  "tenant service" should {
 
-    "create client" in {
+    "create tenantc" in {
       for {
-        answer <- client.createTenant(clientId).invoke(TenantCreationData("my client"))
+        answer <- client.createTenant(tenantId).invoke(TenantCreationData("my tenant"))
       } yield {
         answer should ===(Done)
       }
     }
 
-    "complain about 2nd attempt create client" in {
+    "complain about 2nd attempt create tenant" in {
       val exp = recoverToExceptionIf[TransportException](
       for {
-        answer <- client.createTenant(clientId).invoke(TenantCreationData("my client"))
-        answer2 <- client.createTenant(clientId).invoke(TenantCreationData("my client"))
+        answer <- client.createTenant(tenantId).invoke(TenantCreationData("my tenant"))
+        answer2 <- client.createTenant(tenantId).invoke(TenantCreationData("my tenant"))
       } yield {
         answer2 should ===(Done)
       })
@@ -53,8 +53,8 @@ class TenantServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndA
 
     "removed model" in {
       for {
-        added <- client.createModel(clientId).invoke(ModelCreationData("nice model"))
-        removed <- client.removeModel(clientId, added.id).invoke()
+        added <- client.createModel(tenantId).invoke(ModelCreationData("nice model"))
+        removed <- client.removeModel(tenantId, added.id).invoke()
       } yield {
         added shouldBe a [ModelCreated]
 

@@ -40,6 +40,8 @@ class ProductRepository(session: CassandraSession)(implicit ec: ExecutionContext
     }
 
   def selectLiveProductsForTenant(tenantId: TenantId): Future[Seq[ProductId]] = {
+
+    // cancelling is uncommon so we can allow filtering
     val queryRes = session.selectAll(
       s"""
          | select productId from products where tenantId = '$tenantId' and cancelled = FALSE allow filtering
@@ -87,7 +89,7 @@ extends ReadSideProcessor[ProductEvent] with Logging {
 
   override def buildHandler(): ReadSideProcessor.ReadSideHandler[ProductEvent] = {
     logger.debug(s"in buildHandler")
-    readSide.builder[ProductEvent]("clientRepositoryOffset")
+    readSide.builder[ProductEvent]("productRepositoryOffset")
     .setGlobalPrepare(createTables)
     .setPrepare(_ => prepareStatements())
       .setEventHandler[ProductCreated](e => insertProduct(e.event.tenantId, e.event.id, false))

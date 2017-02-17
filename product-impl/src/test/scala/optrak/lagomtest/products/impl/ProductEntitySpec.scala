@@ -25,7 +25,7 @@ class ProductEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll wi
 
 
 
-  val tenantId = "client1"
+  val tenantId = "tenant1"
   val modelId = UUIDs.timeBased()
 
   private def withTestDriver[T](block: PersistentEntityTestDriver[ProductCommand, ProductEvent, Option[Product]] => T): T = {

@@ -1,4 +1,4 @@
-# lagom-multiclient
+# lagom-multitenant
 
 Project to investigate issues for lagom for working a multi-tenant environment in a collection of lagom services.
 

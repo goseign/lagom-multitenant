@@ -18,7 +18,7 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
   */
 class ModelEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll with OptionValues {
 
-  private val system = ActorSystem("ClientEntitySpec", JsonSerializerRegistry.actorSystemSetupFor(ModelSerializerRegistry))
+  private val system = ActorSystem("TenantEntitySpec", JsonSerializerRegistry.actorSystemSetupFor(ModelSerializerRegistry))
 
   override def afterAll = {
     TestKit.shutdownActorSystem(system)
@@ -40,7 +40,7 @@ class ModelEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll with
     }
   }
 
-  "Client entity" should {
+  "Tenant entity" should {
 
     "allow creation of model" in withTestDriver { driver =>
       val outcome = driver.run(CreateModel(modelDescription))
