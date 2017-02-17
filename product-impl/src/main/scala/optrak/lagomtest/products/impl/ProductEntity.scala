@@ -37,13 +37,13 @@ class ProductEntity extends PersistentEntity {
   def noProductYet: Actions = {
     Actions()
       .onCommand[CreateProduct, Done] {
-      case (CreateProduct(clientId, id, size, group), ctx, _) =>
-        ctx.thenPersist(ProductCreated(clientId, id, size, group))(evt =>
+      case (CreateProduct(tenantId, id, size, group), ctx, _) =>
+        ctx.thenPersist(ProductCreated(tenantId, id, size, group))(evt =>
           ctx.reply(Done)
         )
     }
       .onEvent {
-        case (ProductCreated(clientId, id, size, group), _) =>
+        case (ProductCreated(tenantId, id, size, group), _) =>
           Some(Product(id, size, group, false))
       }
   }
@@ -51,25 +51,25 @@ class ProductEntity extends PersistentEntity {
   def hasProduct: Actions = {
     Actions()
       .onCommand[ProductDoCommand, Done] {
-      case (UpdateProductSize(clientId, id, newSize), ctx, _) =>
-        ctx.thenPersist(ProductSizeUpdated(clientId, id, newSize))(_ =>
+      case (UpdateProductSize(tenantId, id, newSize), ctx, _) =>
+        ctx.thenPersist(ProductSizeUpdated(tenantId, id, newSize))(_ =>
           ctx.reply(Done))
-      case (UpdateProductGroup(clientId, id, newGroup), ctx, _) =>
-        ctx.thenPersist(ProductGroupUpdated(clientId, id, newGroup))(_ =>
+      case (UpdateProductGroup(tenantId, id, newGroup), ctx, _) =>
+        ctx.thenPersist(ProductGroupUpdated(tenantId, id, newGroup))(_ =>
           ctx.reply(Done))
-      case (CancelProduct(clientId, id), ctx, _) =>
-        ctx.thenPersist(ProductCancelled(clientId, id))(_ =>
+      case (CancelProduct(tenantId, id), ctx, _) =>
+        ctx.thenPersist(ProductCancelled(tenantId, id))(_ =>
           ctx.reply(Done))
     }.onReadOnlyCommand[GetProduct.type, Product]{
       case (GetProduct, ctx, state) =>
         ctx.reply(state.get)
     }.onEvent {
       // Event handler for the ProductChanged event
-      case (ProductSizeUpdated(clientId, id, newSize), Some(product)) =>
+      case (ProductSizeUpdated(tenantId, id, newSize), Some(product)) =>
         Some(product.copy(size = newSize))
-      case (ProductGroupUpdated(clientId, id, newGroup), Some(product)) =>
+      case (ProductGroupUpdated(tenantId, id, newGroup), Some(product)) =>
         Some(product.copy(group = newGroup))
-      case (ProductCancelled(clientId, id), Some(product)) =>
+      case (ProductCancelled(tenantId, id), Some(product)) =>
         Some(product.copy(cancelled = true))
     }
   }
@@ -80,10 +80,10 @@ class ProductEntity extends PersistentEntity {
 sealed trait ProductCommand
 
 sealed trait ProductDoCommand extends ProductCommand with ReplyType[Done]
-case class CreateProduct(clientId: TenantId, id: String, size: Int, group: String) extends ProductDoCommand
-case class UpdateProductSize(clientId: TenantId, id: String, newSize: Int) extends ProductDoCommand
-case class UpdateProductGroup(clientId: TenantId, id: String, newGroup: String) extends ProductDoCommand
-case class CancelProduct(clientId: TenantId, id: String) extends ProductDoCommand
+case class CreateProduct(tenantId: TenantId, id: String, size: Int, group: String) extends ProductDoCommand
+case class UpdateProductSize(tenantId: TenantId, id: String, newSize: Int) extends ProductDoCommand
+case class UpdateProductGroup(tenantId: TenantId, id: String, newGroup: String) extends ProductDoCommand
+case class CancelProduct(tenantId: TenantId, id: String) extends ProductDoCommand
 
 case object GetProduct extends ProductCommand with ReplyType[Product] {
   implicit def format: Format[GetProduct.type] = JsonFormats.singletonFormat(GetProduct)

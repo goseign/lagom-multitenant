@@ -10,18 +10,27 @@ import optrak.lagomtest.datamodel.ModelsJson._
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
+  *
+  * the tenant for whom we are managing the products
+  * product id - nb externally defined so 2 clients could have different products with same id.
+  *
+  * Refer to datamodel for description of data model
   */
 trait ProductService extends Service {
 
-  def createProduct(client: String, id: String): ServiceCall[ProductCreationData, Done]
+  def createProduct(tenant: TenantId, id: ProductId): ServiceCall[ProductCreationData, Done]
 
-  def updateSize(client: String, id: String, newSize: Int): ServiceCall[NotUsed, Done]
+  def updateSize(tenant: TenantId, id: ProductId, newSize: Int): ServiceCall[NotUsed, Done]
 
-  def updateGroup(client: String, id: String, newGroup: String): ServiceCall[NotUsed, Done]
+  def updateGroup(tenant: TenantId, id: ProductId, newGroup: String): ServiceCall[NotUsed, Done]
 
-  def getProduct(client: String, id: String): ServiceCall[NotUsed, Product]
+  def getProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Product]
 
-  def cancelProduct(client: String, id: String): ServiceCall[NotUsed, Done]
+  def cancelProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Done]
+
+  def getProductsForTenant(tenant: TenantId): ServiceCall[NotUsed, List[ProductStatus]]
+
+  def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, List[ProductId]]
 
 
   override final def descriptor = {
@@ -39,6 +48,8 @@ trait ProductService extends Service {
 }
 
 case class ProductCreationData(size: Int, group: String)
+
+case class ProductStatus(productId: ProductId, isCancelled: Boolean)
 
 object ProductCreationData{
   implicit val format: Format[ProductCreationData] = Json.format[ProductCreationData]

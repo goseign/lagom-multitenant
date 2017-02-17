@@ -23,7 +23,7 @@ trait ProductComponents extends LagomServerComponents
     bindService[ProductService].to(wire[ProductServiceImpl])
   )
 
-  lazy val clientRepository = wire[ProductRepository]
+  lazy val productRepository = wire[ProductRepository]
 
   def environment: Environment
 

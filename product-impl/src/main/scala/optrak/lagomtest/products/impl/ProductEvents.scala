@@ -12,7 +12,7 @@ import play.api.libs.json.{Format, Json}
 */
 object ProductEvents {
 
-  // nb the client event needs to be aggregateEvent because it is used by read processor and needs an aggregate tag
+  // nb the productevent needs to be aggregateEvent because it is used by read processor and needs an aggregate tag
   sealed trait ProductEvent extends AggregateEvent[ProductEvent] {
     override def aggregateTag = ProductEvent.Tag
   }
@@ -22,10 +22,10 @@ object ProductEvents {
     val Tag = AggregateEventTag.sharded[ProductEvent](NumShards)
   }
 
-  case class ProductCreated(clientId: TenantId, id: String, size: Int, group: String) extends ProductEvent
-  case class ProductSizeUpdated(clientId: TenantId, id: String, newSize: Int) extends ProductEvent
-  case class ProductGroupUpdated(clientId: TenantId, id: String, newGroup: String) extends ProductEvent
-  case class ProductCancelled(clientId: TenantId, id: String) extends ProductEvent
+  case class ProductCreated(tenantId: TenantId, id: String, size: Int, group: String) extends ProductEvent
+  case class ProductSizeUpdated(tenantId: TenantId, id: String, newSize: Int) extends ProductEvent
+  case class ProductGroupUpdated(tenantId: TenantId, id: String, newGroup: String) extends ProductEvent
+  case class ProductCancelled(tenantId: TenantId, id: String) extends ProductEvent
 
   object ProductCreated {
     implicit def format: Format[ProductCreated] = Json.format[ProductCreated]
