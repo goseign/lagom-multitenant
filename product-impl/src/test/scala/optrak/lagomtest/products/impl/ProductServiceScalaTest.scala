@@ -61,14 +61,13 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     }
 
   }
-
   "reading" should {
-    "create and retrieve multiple products for single tenant" in {
+    def createP(implicit arb: Arbitrary[ProductCreationData]): Option[ProductCreationData] =
+      arb.arbitrary.sample
+
+    "create multiple products for single tenant" in {
 
       implicitly[Arbitrary[ProductCreationData]]
-
-      def createP(implicit arb: Arbitrary[ProductCreationData]): Option[ProductCreationData] =
-        arb.arbitrary.sample
 
       // we're going to generate some arbitrary products then check that they actually got created
       val cps : List[ProductCreationData] = 0.to(10).flatMap( i => createP ).toList
@@ -77,42 +76,49 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
 
       for {
         seq <- Future.sequence(productsCreated)
-        allProducts <- client.getProductsForTenant(tenantId).invoke()
+        allProducts <- {
+          Thread.sleep(4000)
+          client.getProductsForTenant(tenantId).invoke()
+        }
       } yield {
         val ap: Seq[ProductStatus] = allProducts
+        println(s"all products is $allProducts")
 
         products.foreach { p =>
           val found = ap.find(_.productId == p._1)
-          found should === (true)
+          found should === (Some(ProductStatus(p._1, false)))
         }
         true should === (true)
       }
 
     }
 
-    "cancel selected tenants" in {
+    "cancel selected products" in {
 
-      implicitly[Arbitrary[ProductCreationData]]
-
-      def createP(implicit arb: Arbitrary[ProductCreationData]): Option[ProductCreationData] =
-        arb.arbitrary.sample
-
-      // we're going to generate some arbitrary products then check that they actually got created
-      val cps : List[ProductCreationData] = 0.to(10).flatMap( i => createP ).toList
-      val products: List[(ProductId, ProductCreationData)] = cps.zipWithIndex.map(t => (t._2.toString, t._1))
-      val productsCreated = products.map {t => client.createProduct(tenantId, t._1).invoke(t._2)}
+      val cps : List[ProductCreationData] = 20.to(30).flatMap( i => createP ).toList
+      val products: List[(ProductId, ProductCreationData)] = cps.zipWithIndex.map(t => ((t._2 + 20).toString, t._1))
+      val productsCreated = products.map {t =>
+        Thread.sleep(1000)
+        client.createProduct(tenantId, t._1).invoke(t._2)
+      }
 
       for {
         seq <- Future.sequence(productsCreated)
-        allProducts <- client.getProductsForTenant(tenantId).invoke()
-      } yield {
-        val ap: Seq[ProductStatus] = allProducts
 
-        products.foreach { p =>
-          val found = ap.find(_.productId == p._1)
-          found should === (true)
+        allProducts <- client.getProductsForTenant(tenantId).invoke()
+        hid = allProducts.head.productId
+      _ = println(s"head id is $hid")
+        cancelled <- client.cancelProduct(tenantId, hid).invoke()
+        checkCancelled <- client.getProduct(tenantId, hid).invoke()
+        _ = println(s"got ceancelled returns $checkCancelled")
+        liveProducts <- {
+          Thread.sleep(8000)
+          client.getLiveProductsForTenant(tenantId).invoke()
         }
-        true should === (true)
+      } yield {
+        checkCancelled.cancelled === true
+        println(s"live products is $liveProducts")
+        liveProducts.size should === (allProducts.size - 1)
       }
 
     }

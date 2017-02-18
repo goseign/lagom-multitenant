@@ -2,6 +2,7 @@ package optrak.lagomtest.products.api
 
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.Service.pathCall
+import com.lightbend.lagom.scaladsl.api.broker.Topic
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.datamodel.Models._
@@ -47,6 +48,9 @@ trait ProductService extends Service {
     ).withAutoAcl(true)
   }
 
+  def productEvents: Topic[ProductEvent]
+
+
 }
 
 case class ProductCreationData(size: Int, group: String)
@@ -57,6 +61,8 @@ object ProductCreationData{
   implicit val format: Format[ProductCreationData] = Json.format[ProductCreationData]
 }
 
-
+object ProductStatus {
+  implicit val format: Format[ProductStatus] = Json.format[ProductStatus]
+}
 
 

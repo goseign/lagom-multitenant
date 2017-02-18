@@ -4,6 +4,7 @@ import akka.Done
 import com.lightbend.lagom.scaladsl.api.transport.{TransportErrorCode, TransportException}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
+import grizzled.slf4j.Logging
 import optrak.lagomtest.datamodel.Models._
 import optrak.lagomtest.products.impl.ProductEvents._
 import optrak.lagomtest.utils.JsonFormats
@@ -17,7 +18,7 @@ import play.api.libs.json.{Format, Json}
 case class ProductAlreadyExistsException(tenantId: TenantId, productId: ProductId)
   extends TransportException(TransportErrorCode.UnsupportedData, s"product $productId for tenant $tenantId already exists")
 
-class ProductEntity extends PersistentEntity {
+class ProductEntity extends PersistentEntity with Logging {
 
   override type Command = ProductCommand
   override type Event = ProductEvent
@@ -42,9 +43,10 @@ class ProductEntity extends PersistentEntity {
     Actions()
       .onCommand[CreateProduct, Done] {
       case (CreateProduct(tenantId, id, size, group), ctx, _) =>
-        ctx.thenPersist(ProductCreated(tenantId, id, size, group))(evt =>
+        ctx.thenPersist(ProductCreated(tenantId, id, size, group)) { evt =>
+          logger.debug(s"creating product $tenantId $id")
           ctx.reply(Done)
-        )
+        }
     }
       .onEvent {
         case (ProductCreated(tenantId, id, size, group), _) =>
@@ -67,8 +69,9 @@ class ProductEntity extends PersistentEntity {
           ctx.reply(Done))
     }.onCommand[CancelProduct, Done] {
       case (CancelProduct(tenantId, id), ctx, _) =>
-        ctx.thenPersist(ProductCancelled(tenantId, id))(_ =>
-          ctx.reply(Done))
+        ctx.thenPersist(ProductCancelled(tenantId, id)){_ =>
+          logger.debug(s"cancelling product $tenantId $id")
+          ctx.reply(Done)}
     }.onReadOnlyCommand[GetProduct.type, Product]{
       case (GetProduct, ctx, state) =>
         ctx.reply(state.get)

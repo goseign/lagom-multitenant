@@ -47,11 +47,13 @@ class ProductRepository(session: CassandraSession)(implicit ec: ExecutionContext
          | select productId from products where tenantId = '$tenantId' and cancelled = FALSE allow filtering
       """.
         stripMargin)
-    queryRes.map(rows =>
-      rows.map { r =>
+    queryRes.map { rows =>
+      val res = rows.map { r =>
         r.getString("productId")
       }
-    )
+      logger.debug(s"got live products fo $tenantId $res")
+      res
+    }
   }
 
 }
@@ -92,8 +94,8 @@ extends ReadSideProcessor[ProductEvent] with Logging {
     readSide.builder[ProductEvent]("productRepositoryOffset")
     .setGlobalPrepare(createTables)
     .setPrepare(_ => prepareStatements())
-      .setEventHandler[ProductCreated](e => insertProduct(e.event.tenantId, e.event.id, false))
       .setEventHandler[ProductCancelled](e => cancelProduct(e.event.tenantId, e.event.id))
+      .setEventHandler[ProductCreated](e => insertProduct(e.event.tenantId, e.event.id, false))
     .build
   }
 
@@ -131,7 +133,9 @@ extends ReadSideProcessor[ProductEvent] with Logging {
   // again copy pattern from item repository
   private def cancelProduct(tenantId: TenantId, productId: ProductId) = {
     logger.debug(s"cancelProduct $tenantId")
-    Future.successful(List(cancelProductStatement.bind(tenantId, productId)))
+    val res = Future.successful(List(cancelProductStatement.bind(tenantId, productId)))
+    logger.debug(s"cancelledProduct $tenantId")
+    res
   }
 
 }
