@@ -94,8 +94,8 @@ extends ReadSideProcessor[ProductEvent] with Logging {
     readSide.builder[ProductEvent]("productRepositoryOffset")
     .setGlobalPrepare(createTables)
     .setPrepare(_ => prepareStatements())
-      .setEventHandler[ProductCancelled](e => cancelProduct(e.event.tenantId, e.event.id))
-      .setEventHandler[ProductCreated](e => insertProduct(e.event.tenantId, e.event.id, false))
+      .setEventHandler[ProductCancelled](e => cancelProduct(e.event.tenantId, e.event.productId))
+      .setEventHandler[ProductCreated](e => insertProduct(e.event.tenantId, e.event.productId, false))
     .build
   }
 

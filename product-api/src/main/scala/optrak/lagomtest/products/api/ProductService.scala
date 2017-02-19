@@ -3,10 +3,12 @@ package optrak.lagomtest.products.api
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.Service.pathCall
 import com.lightbend.lagom.scaladsl.api.broker.Topic
+import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.datamodel.Models._
 import optrak.lagomtest.datamodel.ModelsJson._
+import optrak.lagomtest.products.api.ProductEvents.ProductEvent
 
 /**
   * Created by tim on 21/01/17.
@@ -29,9 +31,9 @@ trait ProductService extends Service {
 
   def cancelProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Done]
 
-  def getProductsForTenant(tenant: TenantId): ServiceCall[NotUsed, Seq[ProductStatus]]
+  def getProductsForTenant(tenant: TenantId): ServiceCall[NotUsed, ProductStatuses]
 
-  def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, Seq[ProductId]]
+  def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, ProductIds]
 
 
   override final def descriptor = {
@@ -45,6 +47,11 @@ trait ProductService extends Service {
       pathCall("/optrak.lagom.products.api/:tenant/products", getProductsForTenant _ ),
       pathCall("/optrak.lagom.products.api/:tenant/liveProducts", getLiveProductsForTenant _ ),
       pathCall("/optrak.lagom.products.api/:tenant/cancel/:id", cancelProduct _ )
+    )
+    .withTopics(
+      topic("product-directoryEvent", this.productEvents)
+      .addProperty(KafkaProperties.partitionKeyStrategy,
+        PartitionKeyStrategy[ProductEvent](_.tenantId))
     ).withAutoAcl(true)
   }
 
@@ -57,6 +64,10 @@ case class ProductCreationData(size: Int, group: String)
 
 case class ProductStatus(productId: ProductId, isCancelled: Boolean)
 
+case class ProductStatuses(statuses: Set[ProductStatus])
+
+case class ProductIds(ids: Set[ProductId])
+
 object ProductCreationData{
   implicit val format: Format[ProductCreationData] = Json.format[ProductCreationData]
 }
@@ -64,5 +75,14 @@ object ProductCreationData{
 object ProductStatus {
   implicit val format: Format[ProductStatus] = Json.format[ProductStatus]
 }
+
+object ProductStatuses {
+  implicit val format: Format[ProductStatuses] = Json.format[ProductStatuses]
+}
+
+object ProductIds {
+  implicit val format: Format[ProductIds] = Json.format[ProductIds]
+}
+
 
 

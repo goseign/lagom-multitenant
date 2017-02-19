@@ -1,9 +1,11 @@
 package optrak.lagomtest.products.impl
 
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
-import optrak.lagomtest.datamodel.Models.Product
+import optrak.lagomtest.datamodel.Models.{Product, ProductId}
 import optrak.lagomtest.products.impl.ProductEvents._
 import optrak.lagomtest.datamodel.ModelsJson._
+import optrak.lagomtest.products.api.{ProductIds, ProductStatus, ProductStatuses}
+import optrak.lagomtest.products.impl.TenantProductDirectoryEntity.Innards
 
 import scala.collection.immutable.Seq
 
@@ -24,7 +26,17 @@ object ProductSerializerRegistry extends JsonSerializerRegistry {
       JsonSerializer[ProductCreated],
       JsonSerializer[ProductSizeUpdated],
       JsonSerializer[ProductGroupUpdated],
-      JsonSerializer[ProductCancelled]
+      JsonSerializer[ProductCancelled],
+      JsonSerializer[ProductAddedToDirectory],
+      JsonSerializer[ProductCancelledInDirectory],
+      JsonSerializer[WrappedCreateProduct],
+      JsonSerializer[WrappedCancelProduct],
+      JsonSerializer[GetAllProducts.type],
+      JsonSerializer[GetLiveProducts.type],
+      JsonSerializer[ProductStatus],
+      JsonSerializer[ProductStatuses],
+      JsonSerializer[ProductIds],
+      JsonSerializer[Innards]
 
     )
     res

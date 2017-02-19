@@ -8,7 +8,7 @@ import akka.Done
 import com.lightbend.lagom.scaladsl.api.transport.TransportException
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
-import optrak.lagomtest.products.api.{ProductCreationData, ProductService, ProductStatus}
+import optrak.lagomtest.products.api.{ProductCreationData, ProductService, ProductStatus, ProductStatuses}
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import ProductTestCommon._
 import optrak.lagomtest.datamodel.Models.{Product, ProductId}
@@ -33,7 +33,7 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
   
   def createProductData(product: Product) = ProductCreationData(product.size, product.group) 
 
-
+/*
   "product service" should {
 
     "create and retrieve product" in {
@@ -61,6 +61,7 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     }
 
   }
+  */
   "reading" should {
     def createP(implicit arb: Arbitrary[ProductCreationData]): Option[ProductCreationData] =
       arb.arbitrary.sample
@@ -81,11 +82,11 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
           client.getProductsForTenant(tenantId).invoke()
         }
       } yield {
-        val ap: Seq[ProductStatus] = allProducts
+        val ap: ProductStatuses = allProducts
         println(s"all products is $allProducts")
 
         products.foreach { p =>
-          val found = ap.find(_.productId == p._1)
+          val found = ap.statuses.find(_.productId == p._1)
           found should === (Some(ProductStatus(p._1, false)))
         }
         true should === (true)
@@ -98,7 +99,7 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       val cps : List[ProductCreationData] = 20.to(30).flatMap( i => createP ).toList
       val products: List[(ProductId, ProductCreationData)] = cps.zipWithIndex.map(t => ((t._2 + 20).toString, t._1))
       val productsCreated = products.map {t =>
-        Thread.sleep(1000)
+        Thread.sleep(100)
         client.createProduct(tenantId, t._1).invoke(t._2)
       }
 
@@ -106,22 +107,22 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
         seq <- Future.sequence(productsCreated)
 
         allProducts <- client.getProductsForTenant(tenantId).invoke()
-        hid = allProducts.head.productId
+        hid = allProducts.statuses.head.productId
       _ = println(s"head id is $hid")
         cancelled <- client.cancelProduct(tenantId, hid).invoke()
         checkCancelled <- client.getProduct(tenantId, hid).invoke()
         _ = println(s"got ceancelled returns $checkCancelled")
         liveProducts <- {
-          Thread.sleep(8000)
+          Thread.sleep(3000)
           client.getLiveProductsForTenant(tenantId).invoke()
         }
       } yield {
         checkCancelled.cancelled === true
         println(s"live products is $liveProducts")
-        liveProducts.size should === (allProducts.size - 1)
+        liveProducts.ids.size should === (allProducts.statuses.size - 1)
       }
 
     }
-
   }
+
 }

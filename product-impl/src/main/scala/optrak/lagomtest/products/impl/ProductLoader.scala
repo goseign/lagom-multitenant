@@ -2,6 +2,7 @@ package optrak.lagomtest.products.impl
 
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
+import com.lightbend.lagom.scaladsl.broker.kafka.LagomKafkaComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
 import com.lightbend.lagom.scaladsl.server._
@@ -23,7 +24,7 @@ trait ProductComponents extends LagomServerComponents
     bindService[ProductService].to(wire[ProductServiceImpl])
   )
 
-  lazy val productRepository = wire[ProductRepository]
+  // lazy val productRepository = wire[ProductRepository]
 
   def environment: Environment
 
@@ -33,8 +34,11 @@ trait ProductComponents extends LagomServerComponents
 
   // Register the Product persistent entity
   persistentEntityRegistry.register(wire[ProductEntity])
+  persistentEntityRegistry.register(wire[TenantProductDirectoryEntity])
 
-  readSide.register(wire[ProductEventProcessor])
+  // wire[ProductEventSubscriber]
+
+  // readSide.register(wire[ProductEventProcessor])
 
 }
 
@@ -52,6 +56,7 @@ class ProductLoader extends LagomApplicationLoader {
 abstract class ProductApplication(context: LagomApplicationContext)
   extends LagomApplication(context)
   with ProductComponents
-    with AhcWSComponents {
+    with AhcWSComponents
+    with LagomKafkaComponents {
 
 }

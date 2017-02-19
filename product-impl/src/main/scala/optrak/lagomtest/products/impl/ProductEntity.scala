@@ -29,8 +29,11 @@ class ProductEntity extends PersistentEntity with Logging {
     * The initial state. This is used if there is no snapshotted state to be found.
     */
   override def initialState = None
-
-  /**
+  
+  private val getProductCommand = Actions().onReadOnlyCommand[GetProduct.type, Option[Product]] {
+    case (GetProduct, ctx, state) => ctx.reply(state)
+  }
+      /**
     * An entity can define different behaviours for different states, so the behaviour
     * is a function of the current state to a set of actions.
     */
@@ -47,11 +50,13 @@ class ProductEntity extends PersistentEntity with Logging {
           logger.debug(s"creating product $tenantId $id")
           ctx.reply(Done)
         }
-    }
-      .onEvent {
+    }.onEvent {
         case (ProductCreated(tenantId, id, size, group), _) =>
-          Some(Product(id, size, group, false))
-      }
+          val update = Some(Product(id, size, group, false))
+          logger.debug(s"updated model for $id")
+          update
+      }.orElse(getProductCommand)
+
   }
 
   def hasProduct: Actions = {
@@ -72,9 +77,6 @@ class ProductEntity extends PersistentEntity with Logging {
         ctx.thenPersist(ProductCancelled(tenantId, id)){_ =>
           logger.debug(s"cancelling product $tenantId $id")
           ctx.reply(Done)}
-    }.onReadOnlyCommand[GetProduct.type, Product]{
-      case (GetProduct, ctx, state) =>
-        ctx.reply(state.get)
     }.onEvent {
       // Event handler for the ProductChanged event
       case (ProductSizeUpdated(tenantId, id, newSize), Some(product)) =>
@@ -83,7 +85,7 @@ class ProductEntity extends PersistentEntity with Logging {
         Some(product.copy(group = newGroup))
       case (ProductCancelled(tenantId, id), Some(product)) =>
         Some(product.copy(cancelled = true))
-    }
+    }.orElse(getProductCommand)
   }
 }
 
@@ -97,7 +99,7 @@ case class UpdateProductSize(tenantId: TenantId, id: String, newSize: Int) exten
 case class UpdateProductGroup(tenantId: TenantId, id: String, newGroup: String) extends ProductDoCommand
 case class CancelProduct(tenantId: TenantId, id: String) extends ProductDoCommand
 
-case object GetProduct extends ProductCommand with ReplyType[Product] {
+case object GetProduct extends ProductCommand with ReplyType[Option[Product]] {
   implicit def format: Format[GetProduct.type] = JsonFormats.singletonFormat(GetProduct)
 }
 
