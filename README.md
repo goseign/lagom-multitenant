@@ -54,6 +54,14 @@ The above has serveral consequences:
 
   Exactly how this can be achieved is the primary investigation of this project!
 
+## Entities in Model
+
+### Products
+Products are simple entities. The only interesting thing here is that we keep 2 directories of products. The first is via Cassandra - this is pretty much identical to the online-auction examples in structure. The second is an entity-based directory - where one entity represents the directory for a given tenant.
+
+ The mechanism for populating the entity directory is to make use of a Cassandra Readside processor that is somewhat similar to the first one. However, it does not make any attempt to store data in the cassandra database or create tables. Instead it just invokes the directory entity and sends it a command to store the new record.
+
+
 
 
 

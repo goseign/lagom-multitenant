@@ -165,11 +165,9 @@ private class ProductEventEntityProcessor(session: CassandraSession,
   // todo voodoo  - figure out what exactly is happening
   def aggregateTags = ProductEvent.Tag.allTags
 
-
-
   override def buildHandler(): ReadSideProcessor.ReadSideHandler[ProductEvent] = {
     logger.debug(s"in buildHandler")
-    readSide.builder[ProductEvent]("productRepositoryOffset")
+    readSide.builder[ProductEvent]("productEntityRepositoryOffset")
       .setEventHandler[ProductCancelled](e => cancelProduct(e.event.tenantId, e.event.productId))
       .setEventHandler[ProductCreated](e => insertProduct(e.event.tenantId, e.event.productId, false))
       .build
@@ -184,19 +182,17 @@ private class ProductEventEntityProcessor(session: CassandraSession,
   // we are testing both methods
   private def insertProduct(tenantId: TenantId, productId: ProductId, cancelled: Boolean) = {
     logger.debug(s"insertProduct $tenantId $productId $cancelled")
-    ref(tenantId).ask(WrappedCreateProduct(productId))
-    Future.successful(List.empty)
+    for {
+      isDone <- ref(tenantId).ask(WrappedCreateProduct(productId))
+    } yield List.empty
   }
 
   private def cancelProduct(tenantId: TenantId, productId: ProductId) = {
     logger.debug(s"cancelProduct $tenantId")
     for {
       toEntity <- ref(tenantId).ask(WrappedCancelProduct(productId))
-    } yield {
-      logger.debug(s"cancelledProduct $tenantId")
-      toEntity
-    }
-    Future.successful(List.empty)
+    } yield
+      List.empty
   }
 
 }
