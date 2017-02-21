@@ -20,8 +20,6 @@ object OrderTestCommon {
   val quantity1 = 10
   val order2Id = "order2"
   val quantity2 = 2
-  val group1 = "group1"
-  val group2 = "group2"
   val order1 = Order(order1Id, site1, product1, quantity1)
   val order2 = Order(order2Id, site2, product1, quantity2)
   val order1sz9 = order1.copy(quantity = 9)

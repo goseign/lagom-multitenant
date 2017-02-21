@@ -96,37 +96,6 @@ class OrderServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAf
       }
 
     }
-/*
-    "cancel selected orders" in {
-
-      val cps : List[OrderCreationData] = 20.to(30).flatMap( i => createP ).toList
-      val orders: List[(OrderId, OrderCreationData)] = cps.zipWithIndex.map(t => ((t._2 + 20).toString, t._1))
-      val ordersCreated = orders.map {t =>
-        Thread.sleep(100)
-        client.createOrder(tenantId, t._1).invoke(t._2)
-      }
-
-      for {
-        seq <- Future.sequence(ordersCreated)
-
-        allOrders <- client.getOrdersForTenant(tenantId).invoke()
-        hid = allOrders.statuses.head.orderId
-      _ = println(s"head id is $hid")
-        cancelled <- client.cancelOrder(tenantId, hid).invoke()
-        checkCancelled <- client.getOrder(tenantId, hid).invoke()
-        _ = println(s"got ceancelled returns $checkCancelled")
-        liveOrders <- {
-          Thread.sleep(3000)
-          client.getLiveOrdersForTenant(tenantId).invoke()
-        }
-      } yield {
-        checkCancelled.cancelled === true
-        println(s"live orders is $liveOrders")
-        liveOrders.ids.size should === (allOrders.statuses.size - 1)
-      }
-
-    }
-    */
   }
 
 }

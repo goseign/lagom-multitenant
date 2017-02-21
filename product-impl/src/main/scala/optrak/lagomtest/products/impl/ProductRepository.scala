@@ -64,8 +64,7 @@ class ProductRepository(session: CassandraSession)(implicit ec: ExecutionContext
   * @param executionContext
   */
 private class ProductEventDbProcessor(session: CassandraSession,
-                                      readSide: CassandraReadSide,
-                                      persistentEntityRegistry: PersistentEntityRegistry)
+                                      readSide: CassandraReadSide)
                                      (implicit executionContext: ExecutionContext)
 extends ReadSideProcessor[ProductEvent] with Logging {
 
@@ -127,27 +126,17 @@ extends ReadSideProcessor[ProductEvent] with Logging {
     }
   }
 
-  def ref(tenantId: TenantId) =
-    persistentEntityRegistry.refFor[TenantProductDirectoryEntity](tenantId)
-
 
   // note we're inserting product but we're also sending it to the TenantProductDirectory - just because
   // we are testing both methods
   private def insertProduct(tenantId: TenantId, productId: ProductId, cancelled: Boolean) = {
     logger.debug(s"insertProduct $tenantId $productId $cancelled")
-    for {
-      toEntity <- ref(tenantId).ask(WrappedCreateProduct(productId))
-    } yield ()
     Future.successful(List(insertProductStatement.bind(tenantId, productId)))
 
   }
 
   private def cancelProduct(tenantId: TenantId, productId: ProductId) = {
     logger.debug(s"cancelProduct $tenantId")
-    for {
-      toEntity <- ref(tenantId).ask(WrappedCancelProduct(productId))
-    } yield ()
-
     val res =Future.successful(List(cancelProductStatement.bind(tenantId, productId)))
     logger.debug(s"cancelledProduct $tenantId")
     res

@@ -5,7 +5,6 @@ import optrak.lagomtest.datamodel.Models.{Order, OrderId}
 import optrak.lagomtest.orders.impl.OrderEvents._
 import optrak.lagomtest.datamodel.ModelsJson._
 import optrak.lagomtest.orders.api.OrderIds
-import optrak.lagomtest.orders.impl.TenantOrderDirectoryEntity.Innards
 
 import scala.collection.immutable.Seq
 
@@ -23,11 +22,7 @@ object OrderSerializerRegistry extends JsonSerializerRegistry {
       JsonSerializer[Order],
       JsonSerializer[OrderCreated],
       JsonSerializer[OrderQuantityUpdated],
-      JsonSerializer[OrderAddedToDirectory],
-      JsonSerializer[WrappedCreateOrder],
-      JsonSerializer[GetAllOrders.type],
-      JsonSerializer[OrderIds],
-      JsonSerializer[Innards]
+      JsonSerializer[OrderIds]
 
     )
     res

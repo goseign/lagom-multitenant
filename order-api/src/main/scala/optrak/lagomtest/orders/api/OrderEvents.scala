@@ -20,9 +20,6 @@ object OrderEvents {
 
   case class OrderCreated(tenantId: TenantId, orderId: OrderId) extends OrderEvent
 
-  // unlike the order entity itself, we don't care how it's been updated, we just want the new version
-  case class OrderCancelled(tenantId: TenantId, orderId: OrderId) extends OrderEvent
-
   object OrderCreated {
     implicit def format: Format[OrderCreated] = Json.format[OrderCreated]
   }

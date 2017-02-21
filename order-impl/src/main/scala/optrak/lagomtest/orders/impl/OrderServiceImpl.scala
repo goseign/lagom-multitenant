@@ -19,9 +19,8 @@ import scala.concurrent.ExecutionContext
   * Created by tim on 26/01/17.
   * Copyright Tim Pigden, Hertford UK
   */
-class OrderServiceImpl(persistentEntityRegistry: PersistentEntityRegistry
-                         // ,orderRepository: OrderRepository
-                        )
+class OrderServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
+                       orderRepository: OrderRepository)
                         (implicit ec: ExecutionContext)
   extends OrderService with Logging {
 
@@ -31,9 +30,6 @@ class OrderServiceImpl(persistentEntityRegistry: PersistentEntityRegistry
 
   def ref(tenantId: TenantId, id: OrderId) =
       persistentEntityRegistry.refFor[OrderEntity](entityId(tenantId, id))
-
-  def directoryRef(tenantId: TenantId) =
-    persistentEntityRegistry.refFor[TenantOrderDirectoryEntity](tenantId)
 
 
   override def createOrder(tenantId: TenantId, id: OrderId): ServiceCall[OrderCreationData, Done] = ServiceCall { request =>
@@ -55,25 +51,9 @@ class OrderServiceImpl(persistentEntityRegistry: PersistentEntityRegistry
   }
 
   override def getOrdersForTenant(tenantId: TenantId): ServiceCall[NotUsed, OrderIds] = ServiceCall { _ =>
-    directoryRef(tenantId).ask(GetAllOrders)
+    orderRepository.selectOrdersForTenant(tenantId)
   }
 
-  override def orderEvents: Topic[ApiOrderEvent] = TopicProducer.taggedStreamWithOffset(OrderEvent.Tag.allTags.toList) { (tag, offset) =>
-    persistentEntityRegistry.eventStream(tag, offset).map { t =>
-      val event = t.event
-      ref(event.tenantId, event.orderId).ask(GetOrder).flatMap {
-        case Some(order) =>
-          event match {
-            case pc: OrderCreated =>
-              logger.debug(s"impl got orderCreated $pc")
-              directoryRef(event.tenantId).ask(WrappedCreateOrder(event.orderId)).map { _ =>
-                ApiOrderCreated(event.tenantId, order.id)
-              }
-          }
-      }.map(x => (x, offset))
-    }.mapAsync(1)(identity)
-
-  }
 }
 
 

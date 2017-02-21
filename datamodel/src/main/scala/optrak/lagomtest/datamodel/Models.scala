@@ -15,7 +15,7 @@ object Models {
 
   type SiteId = String
 
-  case class Site(id: SiteId, siteCode: String, town: String, address: Option[String], postcode: String)
+  case class Site(id: SiteId, postcode: String)
 
   type OrderId = String
 

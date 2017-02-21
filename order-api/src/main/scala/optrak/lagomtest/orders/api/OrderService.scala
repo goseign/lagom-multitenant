@@ -38,15 +38,10 @@ trait OrderService extends Service {
       pathCall("/optrak.lagom.orders.api/:tenant/create/:id", createOrder _),
       pathCall("/optrak.lagom.orders.api/:tenant/order/:id", getOrder _ ),
       pathCall("/optrak.lagom.orders.api/:tenant/orders", getOrdersForTenant _ )
-    )
-    .withTopics(
-      topic("order-directoryEvent", this.orderEvents)
-      .addProperty(KafkaProperties.partitionKeyStrategy,
-        PartitionKeyStrategy[OrderEvent](_.tenantId))
     ).withAutoAcl(true)
   }
 
-  def orderEvents: Topic[OrderEvent]
+  // def orderEvents: Topic[OrderEven
 
 
 }

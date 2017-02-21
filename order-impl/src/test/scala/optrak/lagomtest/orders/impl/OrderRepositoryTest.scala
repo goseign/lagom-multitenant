@@ -11,9 +11,10 @@ import optrak.lagomtest.utils.ReadSideTestDriver
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.ws.ahc.AhcWSComponents
 import OrderTestCommon._
+import optrak.lagomtest.orders.impl.OrderEvents.{OrderCreated, OrderEvent}
 
 import scala.concurrent.Future
-/*
+
 
 class OrderRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matchers {
 
@@ -27,33 +28,28 @@ class OrderRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matc
   override def afterAll() = server.stop()
 
   private val testDriver = server.application.readSide
-  // private val orderRepository = server.application.orderRepository
+  private val orderRepository = server.application.orderRepository
   private val offset = new AtomicInteger()
 
 
   "The order event processor" should {
     "create a order" in {
-      val orderCreated = OrderCreated(tenantId, order1Id, order1Size, group1)
+      val orderCreated = OrderCreated(tenantId, order1Id, site1, product1, quantity1)
       for {
         _ <- feed(entityId(tenantId, order1Id), orderCreated)
         orders <- getOrders
       } yield {
-        orders should contain only (OrderStatus(orderCreated.orderId, false))
+        orders.ids should contain only (orderCreated.orderId)
       }
     }
 
     "create another order" in {
-      val orderCreated = OrderCreated(tenantId, order2Id, order2Size, group2)
-      val orderCancelled = OrderCancelled(tenantId, order1Id)
+      val orderCreated = OrderCreated(tenantId, order2Id, site2, product2, quantity2)
       for {
         _ <- feed(entityId(tenantId, order2Id), orderCreated)
-        _ <- feed(entityId(tenantId, order1Id), orderCancelled)
         allOrders <- getOrders
-        liveOrders <- getLiveOrders
       } yield {
-        allOrders should contain (OrderStatus(order1Id, true))
-        allOrders should contain (OrderStatus(order2Id, false))
-        liveOrders should contain only (order2Id)
+        allOrders.ids should contain (order1Id)
       }
     }
   }
@@ -62,13 +58,9 @@ class OrderRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matc
     orderRepository.selectOrdersForTenant(tenantId)
   }
 
-  private def getLiveOrders = {
-    orderRepository.selectLiveOrdersForTenant(tenantId)
-  }
-
   private def feed(orderId: OrderId, event: OrderEvent) = {
     testDriver.feed(orderId.toString, event, Sequence(offset.getAndIncrement))
   }
 
 
-}*/
+}

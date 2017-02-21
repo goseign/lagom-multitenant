@@ -8,6 +8,7 @@ import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor
 import com.lightbend.lagom.scaladsl.persistence.cassandra.{CassandraReadSide, CassandraSession}
 import grizzled.slf4j.Logging
 import optrak.lagomtest.datamodel.Models._
+import optrak.lagomtest.orders.api.OrderIds
 import optrak.lagomtest.orders.impl.OrderEvents.{OrderCreated, OrderEvent}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -23,37 +24,21 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class OrderRepository(session: CassandraSession)(implicit ec: ExecutionContext) extends Logging {
 
-  def selectOrdersForTenant(tenantId: TenantId): Future[Seq[OrderId]] = {
+  def selectOrdersForTenant(tenantId: TenantId): Future[OrderIds] = {
     val queryRes = session.selectAll(
       s"""
-        | select orderId, cancelled from orders where tenantId = '$tenantId'
+        | select orderId from orders where tenantId = '$tenantId'
       """.
         stripMargin)
       queryRes.map(rows =>
-        rows.map { r =>
+        OrderIds(
+          rows.map { r =>
           val orderId = r.getString("orderId")
-          val cancelled = r.getBool("cancelled")
           orderId
-        }
+        }.toSet)
       )
     }
 
-  def selectLiveOrdersForTenant(tenantId: TenantId): Future[Seq[OrderId]] = {
-
-    // cancelling is uncommon so we can allow filtering
-    val queryRes = session.selectAll(
-      s"""
-         | select orderId from orders where tenantId = '$tenantId' and cancelled = FALSE allow filtering
-      """.
-        stripMargin)
-    queryRes.map { rows =>
-      val res = rows.map { r =>
-        r.getString("orderId")
-      }
-      logger.debug(s"got live orders fo $tenantId $res")
-      res
-    }
-  }
 
 }
 /**
@@ -66,7 +51,6 @@ private class OrderEventProcessor(session: CassandraSession, readSide: Cassandra
 extends ReadSideProcessor[OrderEvent] with Logging {
 
   private var insertOrderStatement : PreparedStatement = null
-  private var cancelOrderStatement : PreparedStatement = null
 
   // todo voodoo  - figure out what exactly is happening
   def aggregateTags = OrderEvent.Tag.allTags
@@ -78,7 +62,6 @@ extends ReadSideProcessor[OrderEvent] with Logging {
         CREATE TABLE IF NOT EXISTS orders (
           tenantId text,
           orderId text,
-          cancelled boolean,
           PRIMARY KEY (tenantId, orderId)
         )
       """)
@@ -93,7 +76,7 @@ extends ReadSideProcessor[OrderEvent] with Logging {
     readSide.builder[OrderEvent]("orderRepositoryOffset")
     .setGlobalPrepare(createTables)
     .setPrepare(_ => prepareStatements())
-      .setEventHandler[OrderCreated](e => insertOrder(e.event.tenantId, e.event.orderId, false))
+      .setEventHandler[OrderCreated](e => insertOrder(e.event.tenantId, e.event.orderId))
     .build
   }
 
@@ -106,35 +89,21 @@ extends ReadSideProcessor[OrderEvent] with Logging {
     for {
       insertOrder <- session.prepare(
         """
-          | INSERT INTO orders(tenantId, orderId, cancelled) VALUES (?, ?, FALSE)
-        """.stripMargin)
-      cancelOrder <- session.prepare(
-        """
-          | Update orders
-          |  set cancelled = true
-          |  where tenantId = ? and orderId = ?
+          | INSERT INTO orders(tenantId, orderId) VALUES (?, ?)
         """.stripMargin)
     } yield {
       insertOrderStatement = insertOrder
-      cancelOrderStatement = cancelOrder
       logger.debug(s"ordered insert statment $insertOrder and $insertOrderStatement")
       Done
     }
   }
 
   // again copy pattern from item repository
-  private def insertOrder(tenantId: TenantId, orderId: OrderId, cancelled: Boolean) = {
-    logger.debug(s"insertOrder $tenantId $orderId $cancelled")
-    Future.successful(List(insertOrderStatement.bind(tenantId, orderId /*, new java.lang.Boolean(cancelled)*/)))
+  private def insertOrder(tenantId: TenantId, orderId: OrderId) = {
+    logger.debug(s"insertOrder $tenantId $orderId")
+    Future.successful(List(insertOrderStatement.bind(tenantId, orderId)))
   }
 
-  // again copy pattern from item repository
-  private def cancelOrder(tenantId: TenantId, orderId: OrderId) = {
-    logger.debug(s"cancelOrder $tenantId")
-    val res = Future.successful(List(cancelOrderStatement.bind(tenantId, orderId)))
-    logger.debug(s"cancelledOrder $tenantId")
-    res
-  }
 
 }
 
