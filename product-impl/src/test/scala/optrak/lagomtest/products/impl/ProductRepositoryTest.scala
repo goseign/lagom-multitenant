@@ -15,7 +15,7 @@ import ProductTestCommon._
 import optrak.lagomtest.products.api.ProductStatus
 
 import scala.concurrent.Future
-/*
+
 
 class ProductRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matchers {
 
@@ -29,7 +29,7 @@ class ProductRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Ma
   override def afterAll() = server.stop()
 
   private val testDriver = server.application.readSide
-  // private val productRepository = server.application.productRepository
+  private val productRepository = server.application.productRepository
   private val offset = new AtomicInteger()
 
 
@@ -73,4 +73,4 @@ class ProductRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Ma
   }
 
 
-}*/
+}

@@ -13,7 +13,7 @@ import scala.concurrent.Future
 /**
   * Created by tim on 18/02/17.
   * Copyright Tim Pigden, Hertford UK
-  */
+  *
 class ProductEventSubscriber(persistentEntityRegistry: PersistentEntityRegistry, productService: ProductService) {
 
   def ref(tenantId: TenantId) =
@@ -32,3 +32,4 @@ class ProductEventSubscriber(persistentEntityRegistry: PersistentEntityRegistry,
   })
 
 }
+*/

@@ -17,12 +17,35 @@ object Models {
 
   case class Site(id: SiteId, siteCode: String, town: String, address: Option[String], postcode: String)
 
+  type OrderId = String
+
+  // used only in the model. Order as value object with direct links to data
+  case class OrderValue(id: OrderId, site: Site, product: Product, quantity: Int)
+
+  // used for entity, uses references to site and product
+  case class Order(id: OrderId, site: SiteId, product: ProductId, quantity: Int)
+
   type ModelId = UUID
 
+  /** Model corresponds to a micro version of our vehicle routing model.
+    * In DDD terms it is a root entity and it contains products, sites and orders as Value objects -
+    * that is these are just copies of the real thing. They may have (probably will have) been derived from
+    * the respective entitities but they may also be modified locally without changing the underlying order or whatever.
+    * For example "what would happen if the orders would all be 10% bigger?" is a valid vrp query.
+    * Multiple models exist per tenant and they contain overlapping data.
+    *
+    * @param id
+    * @param description
+    * @param products
+    * @param sites
+    * @param orders
+    * @param deleted
+    */
   case class Model(id: ModelId,
                    description: String,
                    products: Map[ProductId, Product] = Map.empty,
                    sites: Map[SiteId, Site] = Map.empty,
+                   orders: Map[OrderId, OrderValue] = Map.empty,
                    deleted: Boolean = false)
 
   object Model {

@@ -1,4 +1,4 @@
-package optrak.lagomtest.products.impl
+package optrak.lagomtest.orders.impl
 
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
@@ -7,53 +7,55 @@ import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
 import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
-import optrak.lagomtest.products.api.ProductService
+import optrak.lagomtest.orders.api.OrderService
 import play.api.Environment
 import play.api.libs.ws.ahc.AhcWSComponents
 
 import scala.concurrent.ExecutionContext
 
 // separate out components relating to repository etc
-trait ProductComponents extends LagomServerComponents
+trait OrderComponents extends LagomServerComponents
   with CassandraPersistenceComponents {
 
   implicit def executionContext: ExecutionContext
 
   // Bind the services that this server provides
   override lazy val lagomServer = LagomServer.forServices(
-    bindService[ProductService].to(wire[ProductServiceImpl])
+    bindService[OrderService].to(wire[OrderServiceImpl])
   )
 
-  lazy val productRepository = wire[ProductRepository]
+  // lazy val orderRepository = wire[OrderRepository]
 
   def environment: Environment
 
 
   // Register the JSON serializer registry
-  override lazy val jsonSerializerRegistry = ProductSerializerRegistry
+  override lazy val jsonSerializerRegistry = OrderSerializerRegistry
 
-  // Register the Product persistent entity
-  persistentEntityRegistry.register(wire[ProductEntity])
-  persistentEntityRegistry.register(wire[TenantProductDirectoryEntity])
+  // Register the Order persistent entity
+  persistentEntityRegistry.register(wire[OrderEntity])
+  persistentEntityRegistry.register(wire[TenantOrderDirectoryEntity])
 
-  readSide.register(wire[ProductEventDbProcessor])
+  // wire[OrderEventSubscriber]
+
+  // readSide.register(wire[OrderEventProcessor])
 
 }
 
-class ProductLoader extends LagomApplicationLoader {
+class OrderLoader extends LagomApplicationLoader {
 
   override def load(context: LagomApplicationContext): LagomApplication =
-    new ProductApplication(context) {
+    new OrderApplication(context) {
       override def serviceLocator: ServiceLocator = NoServiceLocator
     }
 
   override def loadDevMode(context: LagomApplicationContext): LagomApplication =
-    new ProductApplication(context) with LagomDevModeComponents
+    new OrderApplication(context) with LagomDevModeComponents
 }
 
-abstract class ProductApplication(context: LagomApplicationContext)
+abstract class OrderApplication(context: LagomApplicationContext)
   extends LagomApplication(context)
-  with ProductComponents
+  with OrderComponents
     with AhcWSComponents
     with LagomKafkaComponents {
 

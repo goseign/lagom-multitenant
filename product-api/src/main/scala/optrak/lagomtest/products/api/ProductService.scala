@@ -18,6 +18,16 @@ import optrak.lagomtest.products.api.ProductEvents.ProductEvent
   * product id - nb externally defined so 2 tenants could have different products with same id.
   *
   * Refer to datamodel for description of data model
+  *
+  * Note that for testing purposes only we have 2 different implementations of the product directory.
+  *
+  * One uses a readside processor that stores the data in Cassandra as tables and issues queries to return the information.
+  * That database stores all product info in a single table across separate tenants, using the cql to get data for specific
+  * tenant
+  *
+  * The other uses a readside processor in combination with a directory per tenant as an entity. I've no clear idea about
+  * which is "better" or why for this use case but expect that factors will be how long it takes to reconstruct the entity,
+  * what the update frequency is, how often requests are made and so on.
   */
 trait ProductService extends Service {
 
@@ -31,10 +41,13 @@ trait ProductService extends Service {
 
   def cancelProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Done]
 
-  def getProductsForTenant(tenant: TenantId): ServiceCall[NotUsed, ProductStatuses]
+  def getProductsForTenantEntity(tenant: TenantId): ServiceCall[NotUsed, ProductStatuses]
 
-  def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, ProductIds]
+  def getLiveProductsForTenantEntity(tenantId: TenantId): ServiceCall[NotUsed, ProductIds]
 
+  def getProductsForTenantDb(tenant: TenantId): ServiceCall[NotUsed, ProductStatuses]
+
+  def getLiveProductsForTenantDb(tenantId: TenantId): ServiceCall[NotUsed, ProductIds]
 
   override final def descriptor = {
     import Service._
@@ -44,18 +57,22 @@ trait ProductService extends Service {
       pathCall("/optrak.lagom.products.api/:tenant/group/:id/:newGroup", updateGroup _),
       pathCall("/optrak.lagom.products.api/:tenant/create/:id", createProduct _),
       pathCall("/optrak.lagom.products.api/:tenant/product/:id", getProduct _ ),
-      pathCall("/optrak.lagom.products.api/:tenant/products", getProductsForTenant _ ),
-      pathCall("/optrak.lagom.products.api/:tenant/liveProducts", getLiveProductsForTenant _ ),
+      pathCall("/optrak.lagom.products.api/:tenant/productsDb", getProductsForTenantDb _ ),
+      pathCall("/optrak.lagom.products.api/:tenant/liveProductsDb", getLiveProductsForTenantDb _ ),
+      pathCall("/optrak.lagom.products.api/:tenant/productsEntity", getProductsForTenantEntity _ ),
+      pathCall("/optrak.lagom.products.api/:tenant/liveProductsEntity", getLiveProductsForTenantEntity _ ),
       pathCall("/optrak.lagom.products.api/:tenant/cancel/:id", cancelProduct _ )
     )
+      /*
     .withTopics(
       topic("product-directoryEvent", this.productEvents)
       .addProperty(KafkaProperties.partitionKeyStrategy,
         PartitionKeyStrategy[ProductEvent](_.tenantId))
-    ).withAutoAcl(true)
+    ) */
+    .withAutoAcl(true)
   }
 
-  def productEvents: Topic[ProductEvent]
+  // def productEvents: Topic[ProductEvent]
 
 
 }

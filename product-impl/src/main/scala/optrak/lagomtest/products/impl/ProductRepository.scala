@@ -4,7 +4,7 @@ import java.lang.Boolean
 
 import akka.Done
 import com.datastax.driver.core._
-import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor
+import com.lightbend.lagom.scaladsl.persistence.{PersistentEntityRegistry, ReadSideProcessor}
 import com.lightbend.lagom.scaladsl.persistence.cassandra.{CassandraReadSide, CassandraSession}
 import grizzled.slf4j.Logging
 import optrak.lagomtest.datamodel.Models._
@@ -63,7 +63,10 @@ class ProductRepository(session: CassandraSession)(implicit ec: ExecutionContext
   * @param readSide
   * @param executionContext
   */
-private class ProductEventProcessor(session: CassandraSession, readSide: CassandraReadSide)(implicit executionContext: ExecutionContext)
+private class ProductEventDbProcessor(session: CassandraSession,
+                                      readSide: CassandraReadSide,
+                                      persistentEntityRegistry: PersistentEntityRegistry)
+                                     (implicit executionContext: ExecutionContext)
 extends ReadSideProcessor[ProductEvent] with Logging {
 
   private var insertProductStatement : PreparedStatement = null
@@ -124,20 +127,79 @@ extends ReadSideProcessor[ProductEvent] with Logging {
     }
   }
 
-  // again copy pattern from item repository
+  def ref(tenantId: TenantId) =
+    persistentEntityRegistry.refFor[TenantProductDirectoryEntity](tenantId)
+
+
+  // note we're inserting product but we're also sending it to the TenantProductDirectory - just because
+  // we are testing both methods
   private def insertProduct(tenantId: TenantId, productId: ProductId, cancelled: Boolean) = {
     logger.debug(s"insertProduct $tenantId $productId $cancelled")
-    Future.successful(List(insertProductStatement.bind(tenantId, productId /*, new java.lang.Boolean(cancelled)*/)))
+    for {
+      toEntity <- ref(tenantId).ask(WrappedCreateProduct(productId))
+    } yield ()
+    Future.successful(List(insertProductStatement.bind(tenantId, productId)))
+
   }
 
-  // again copy pattern from item repository
   private def cancelProduct(tenantId: TenantId, productId: ProductId) = {
     logger.debug(s"cancelProduct $tenantId")
-    val res = Future.successful(List(cancelProductStatement.bind(tenantId, productId)))
+    for {
+      toEntity <- ref(tenantId).ask(WrappedCancelProduct(productId))
+    } yield ()
+
+    val res =Future.successful(List(cancelProductStatement.bind(tenantId, productId)))
     logger.debug(s"cancelledProduct $tenantId")
     res
+
   }
 
 }
+
+private class ProductEventEntityProcessor(session: CassandraSession,
+                                      readSide: CassandraReadSide,
+                                      persistentEntityRegistry: PersistentEntityRegistry)
+                                     (implicit executionContext: ExecutionContext)
+  extends ReadSideProcessor[ProductEvent] with Logging {
+
+  // todo voodoo  - figure out what exactly is happening
+  def aggregateTags = ProductEvent.Tag.allTags
+
+
+
+  override def buildHandler(): ReadSideProcessor.ReadSideHandler[ProductEvent] = {
+    logger.debug(s"in buildHandler")
+    readSide.builder[ProductEvent]("productRepositoryOffset")
+      .setEventHandler[ProductCancelled](e => cancelProduct(e.event.tenantId, e.event.productId))
+      .setEventHandler[ProductCreated](e => insertProduct(e.event.tenantId, e.event.productId, false))
+      .build
+  }
+
+
+  def ref(tenantId: TenantId) =
+    persistentEntityRegistry.refFor[TenantProductDirectoryEntity](tenantId)
+
+
+  // note we're inserting product but we're also sending it to the TenantProductDirectory - just because
+  // we are testing both methods
+  private def insertProduct(tenantId: TenantId, productId: ProductId, cancelled: Boolean) = {
+    logger.debug(s"insertProduct $tenantId $productId $cancelled")
+    ref(tenantId).ask(WrappedCreateProduct(productId))
+    Future.successful(List.empty)
+  }
+
+  private def cancelProduct(tenantId: TenantId, productId: ProductId) = {
+    logger.debug(s"cancelProduct $tenantId")
+    for {
+      toEntity <- ref(tenantId).ask(WrappedCancelProduct(productId))
+    } yield {
+      logger.debug(s"cancelledProduct $tenantId")
+      toEntity
+    }
+    Future.successful(List.empty)
+  }
+
+}
+
 
 

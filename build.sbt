@@ -66,6 +66,20 @@ lazy val `product-impl` = (project in file("product-impl"))
   .dependsOn(`utils`)
   .dependsOn(`product-api`)
 
+lazy val `order-api` = (project in file("order-api"))
+  .settings(stdApiDependencies :_*)
+  .dependsOn(`datamodel`)
+
+lazy val `order-impl` = (project in file("order-impl"))
+  .enablePlugins(LagomScala)
+  .settings(stdImplDependencies :_*)
+  .settings(testDependencies :_*)
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
+  .dependsOn(`order-api`)
+  .dependsOn(`product-api`)
+
 
 lazy val `model-reader-api` = (project in file("model-reader-api"))
   .settings(kafkaApiDependencies :_*)

@@ -73,56 +73,41 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       // we're going to generate some arbitrary products then check that they actually got created
       val cps : List[ProductCreationData] = 0.to(10).flatMap( i => createP ).toList
       val products: List[(ProductId, ProductCreationData)] = cps.zipWithIndex.map(t => (t._2.toString, t._1))
-      val productsCreated = products.map {t => client.createProduct(tenantId, t._1).invoke(t._2)}
-
-      for {
-        seq <- Future.sequence(productsCreated)
-        allProducts <- {
-          Thread.sleep(4000)
-          client.getProductsForTenant(tenantId).invoke()
-        }
-      } yield {
-        val ap: ProductStatuses = allProducts
-        println(s"all products is $allProducts")
-
-        products.foreach { p =>
-          val found = ap.statuses.find(_.productId == p._1)
-          found should === (Some(ProductStatus(p._1, false)))
-        }
-        true should === (true)
-      }
-
-    }
-
-    "cancel selected products" in {
-
-      val cps : List[ProductCreationData] = 20.to(30).flatMap( i => createP ).toList
-      val products: List[(ProductId, ProductCreationData)] = cps.zipWithIndex.map(t => ((t._2 + 20).toString, t._1))
       val productsCreated = products.map {t =>
-        Thread.sleep(100)
+        Thread.sleep(1500)
         client.createProduct(tenantId, t._1).invoke(t._2)
       }
 
       for {
         seq <- Future.sequence(productsCreated)
-
-        allProducts <- client.getProductsForTenant(tenantId).invoke()
-        hid = allProducts.statuses.head.productId
-      _ = println(s"head id is $hid")
-        cancelled <- client.cancelProduct(tenantId, hid).invoke()
-        checkCancelled <- client.getProduct(tenantId, hid).invoke()
-        _ = println(s"got ceancelled returns $checkCancelled")
-        liveProducts <- {
-          Thread.sleep(3000)
-          client.getLiveProductsForTenant(tenantId).invoke()
+        dbAllProducts <- {
+          Thread.sleep(4000)
+          client.getProductsForTenantDb(tenantId).invoke()
         }
-      } yield {
-        checkCancelled.cancelled === true
-        println(s"live products is $liveProducts")
-        liveProducts.ids.size should === (allProducts.statuses.size - 1)
-      }
+        entityAllProducts <- {
+          Thread.sleep(4000)
+          client.getProductsForTenantEntity(tenantId).invoke()
+        }
+        dbAllProducts <- {
+          Thread.sleep(4000)
+          client.getProductsForTenantDb(tenantId).invoke()
+        }
 
+
+      } yield {
+        val ap: ProductStatuses = dbAllProducts
+        println(s"all products is $dbAllProducts")
+
+        products.foreach { p =>
+          val found = ap.statuses.find(_.productId == p._1)
+          found should === (Some(ProductStatus(p._1, false)))
+        }
+
+        dbAllProducts should ===(entityAllProducts)
+
+      }
     }
+
   }
 
 }

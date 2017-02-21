@@ -19,8 +19,8 @@ import scala.concurrent.ExecutionContext
   * Created by tim on 26/01/17.
   * Copyright Tim Pigden, Hertford UK
   */
-class ProductServiceImpl(persistentEntityRegistry: PersistentEntityRegistry
-                         // ,productRepository: ProductRepository
+class ProductServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
+                          productRepository: ProductRepository
                         )
                         (implicit ec: ExecutionContext)
   extends ProductService with Logging {
@@ -60,14 +60,23 @@ class ProductServiceImpl(persistentEntityRegistry: PersistentEntityRegistry
     }
   }
 
-  override def getProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, ProductStatuses] = ServiceCall { _ =>
+  override def getProductsForTenantDb(tenantId: TenantId): ServiceCall[NotUsed, ProductStatuses] = ServiceCall { _ =>
+    productRepository.selectProductsForTenant(tenantId).map(ss => ProductStatuses(ss.toSet))
+  }
+
+  override def getLiveProductsForTenantDb(tenantId: TenantId): ServiceCall[NotUsed, ProductIds] = ServiceCall { _ =>
+    productRepository.selectLiveProductsForTenant(tenantId).map(ids => ProductIds(ids.toSet))
+  }
+
+  override def getProductsForTenantEntity(tenantId: TenantId) : ServiceCall[NotUsed, ProductStatuses] = ServiceCall { _ =>
     directoryRef(tenantId).ask(GetAllProducts)
   }
 
-  override def getLiveProductsForTenant(tenantId: TenantId): ServiceCall[NotUsed, ProductIds] = ServiceCall { _ =>
+  override def getLiveProductsForTenantEntity(tenantId: TenantId): ServiceCall[NotUsed, ProductIds] = ServiceCall { _ =>
     directoryRef(tenantId).ask(GetLiveProducts)
   }
 
+  /* just to show how it's done. No longer in use
   override def productEvents: Topic[ApiProductEvent] = TopicProducer.taggedStreamWithOffset(ProductEvent.Tag.allTags.toList) { (tag, offset) =>
     persistentEntityRegistry.eventStream(tag, offset).map { t =>
       val event = t.event
@@ -89,6 +98,7 @@ class ProductServiceImpl(persistentEntityRegistry: PersistentEntityRegistry
     }.mapAsync(1)(identity)
 
   }
+  */
 }
 
 

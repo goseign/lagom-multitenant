@@ -1,0 +1,22 @@
+<xml>
+    <ReqPO>
+        <Number>PPO-38206426</Number>
+        <ItemNumber>0017431</ItemNumber>
+        <ReqQuantity>117.00</ReqQuantity>
+        <DeliveryDate>1/16/2017</DeliveryDate>
+        <Vendor/>
+        <Warehouse>620</Warehouse>
+        <FromWarehouse>501</FromWarehouse>
+        <RecId>5676976639</RecId>
+    </ReqPO>
+    <ReqPO>
+        <Number>PPO-38206460</Number>
+        <ItemNumber>0017431</ItemNumber>
+        <ReqQuantity>39.00</ReqQuantity>
+        <DeliveryDate>1/19/2017</DeliveryDate>
+        <Vendor/>
+        <Warehouse>778</Warehouse>
+        <FromWarehouse>501</FromWarehouse>
+        <RecId>5676976673</RecId>
+    </ReqPO>
+</xml>
