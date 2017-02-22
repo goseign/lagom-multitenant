@@ -1,7 +1,12 @@
 package optrak.lagomtest.orders.impl
 
-import optrak.lagomtest.data.Data.{Order, OrderId, TenantId}
+import akka.{Done, NotUsed}
+import com.lightbend.lagom.scaladsl.api.ServiceCall
+import optrak.lagomtest.data.Data._
 import optrak.lagomtest.orders.impl.OrderEvents.OrderCreated
+import optrak.lagomtest.products.api.{ProductCreationData, ProductIds, ProductService, ProductStatuses}
+
+import scala.concurrent.Future
 
 
 /**
@@ -28,5 +33,30 @@ object OrderTestCommon {
   val order1Created = OrderCreated(tenantId, order1Id, site1, product1, quantity1)
 
   def entityId(tenantId: TenantId, orderId: OrderId) = s"$tenantId:$orderId"
+
+  case class ProductMock(valid: Set[ProductId]) extends ProductService {
+
+    override def productExists(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Boolean] = ServiceCall { _ =>
+      Future.successful(valid.contains(id))
+    }
+
+    override def createProduct(tenant: TenantId, id: ProductId): ServiceCall[ProductCreationData, Done] = ???
+
+    override def updateSize(tenant: TenantId, id: ProductId, newSize: Int): ServiceCall[NotUsed, Done] = ???
+
+    override def updateGroup(tenant: TenantId, id: ProductId, newGroup: String): ServiceCall[NotUsed, Done] = ???
+
+    override def getProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Product] = ???
+
+    override def cancelProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Done] = ???
+
+    override def getProductsForTenantEntity(tenant: TenantId): ServiceCall[NotUsed, ProductStatuses] = ???
+
+    override def getLiveProductsForTenantEntity(tenantId: TenantId): ServiceCall[NotUsed, ProductIds] = ???
+
+    override def getProductsForTenantDb(tenant: TenantId): ServiceCall[NotUsed, ProductStatuses] = ???
+
+    override def getLiveProductsForTenantDb(tenantId: TenantId): ServiceCall[NotUsed, ProductIds] = ???
+  }
 
 }

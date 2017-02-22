@@ -12,16 +12,23 @@ import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.ws.ahc.AhcWSComponents
 import OrderTestCommon._
 import optrak.lagomtest.orders.impl.OrderEvents.{OrderCreated, OrderEvent}
+import optrak.lagomtest.products.api.ProductService
 
 import scala.concurrent.Future
 
+/**
+  * This test illustrates injecting other service mocks into our stream
+  */
 
 class OrderRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matchers {
 
   private val server = ServiceTest.startServer(ServiceTest.defaultSetup.withCassandra(true)) { ctx =>
-    new LagomApplication(ctx) with OrderComponents with AhcWSComponents {
+    new OrderApplication(ctx) with OrderComponents with AhcWSComponents {
       override def serviceLocator = NoServiceLocator
       override lazy val readSide: ReadSideTestDriver = new ReadSideTestDriver
+
+      override lazy val productService = ???
+
     }
   }
 

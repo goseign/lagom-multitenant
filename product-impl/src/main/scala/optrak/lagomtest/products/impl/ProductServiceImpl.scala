@@ -60,6 +60,13 @@ class ProductServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
     }
   }
 
+  override def productExists(tenantId: TenantId, id: ProductId): ServiceCall[NotUsed, Boolean] = ServiceCall { request =>
+    ref(tenantId, id).ask(GetProduct).map {
+      case Some(product) => true
+      case None => false
+    }
+  }
+
   override def getProductsForTenantDb(tenantId: TenantId): ServiceCall[NotUsed, ProductStatuses] = ServiceCall { _ =>
     productRepository.selectProductsForTenant(tenantId).map(ss => ProductStatuses(ss.toSet))
   }

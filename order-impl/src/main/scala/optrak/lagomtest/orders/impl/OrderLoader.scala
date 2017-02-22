@@ -8,6 +8,8 @@ import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceCo
 import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
 import optrak.lagomtest.orders.api.OrderService
+import optrak.lagomtest.products.api.ProductService
+import optrak.lagomtest.sites.api.SiteService
 import play.api.Environment
 import play.api.libs.ws.ahc.AhcWSComponents
 
@@ -20,10 +22,6 @@ trait OrderComponents extends LagomServerComponents
   implicit def executionContext: ExecutionContext
 
   // Bind the services that this server provides
-  override lazy val lagomServer = LagomServer.forServices(
-    bindService[OrderService].to(wire[OrderServiceImpl])
-  )
-
   lazy val orderRepository = wire[OrderRepository]
 
   def environment: Environment
@@ -56,5 +54,11 @@ abstract class OrderApplication(context: LagomApplicationContext)
   with OrderComponents
     with AhcWSComponents
     with LagomKafkaComponents {
+  lazy val productService = serviceClient.implement[ProductService]
+  lazy val siteService = serviceClient.implement[SiteService]
+  override lazy val lagomServer = LagomServer.forServices(
+    bindService[OrderService].to(wire[OrderServiceImpl])
+  )
+
 
 }

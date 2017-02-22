@@ -12,6 +12,8 @@ import optrak.lagomtest.data.Data.{Order, OrderId, TenantId}
 import optrak.lagomtest.orders.api.OrderEvents.{OrderCreated => ApiOrderCreated, OrderEvent => ApiOrderEvent}
 import optrak.lagomtest.orders.api._
 import optrak.lagomtest.orders.impl.OrderEvents.{OrderCreated, OrderEvent}
+import optrak.lagomtest.products.api.ProductService
+import optrak.lagomtest.sites.api.SiteService
 
 import scala.concurrent.ExecutionContext
 
@@ -20,7 +22,9 @@ import scala.concurrent.ExecutionContext
   * Copyright Tim Pigden, Hertford UK
   */
 class OrderServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
-                       orderRepository: OrderRepository)
+                       orderRepository: OrderRepository,
+                       siteService: SiteService,
+                       productService: ProductService)
                         (implicit ec: ExecutionContext)
   extends OrderService with Logging {
 
@@ -34,7 +38,11 @@ class OrderServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
 
   override def createOrder(tenantId: TenantId, id: OrderId): ServiceCall[OrderCreationData, Done] = ServiceCall { request =>
     logger.debug(s"creating order $id")
-    ref(tenantId, id).ask(CreateOrder(tenantId, id, request.site, request.product, request.quantity)).map { res =>
+    for {
+      site <- siteService.getSite(tenantId, request.site).invoke()
+      product <- productService.getProduct(tenantId, request.product).invoke()
+      res <- ref(tenantId, id).ask(CreateOrder(tenantId, id, request.site, request.product, request.quantity))
+    } yield {
       logger.debug(s"created order $id")
       res
     }

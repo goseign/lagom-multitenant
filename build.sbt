@@ -92,6 +92,7 @@ lazy val `order-impl` = (project in file("order-impl"))
   .dependsOn(`utils`)
   .dependsOn(`order-api`)
   .dependsOn(`product-api`)
+  .dependsOn(`site-api`)
 
 lazy val `vehicle-api` = (project in file("vehicle-api"))
   .settings(stdApiDependencies :_*)
