@@ -12,6 +12,8 @@ import optrak.lagomtest.orders.api.{OrderCreationData, OrderIds, OrderService}
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import OrderTestCommon._
 import optrak.lagomtest.data.Data.{Order, OrderId}
+import optrak.lagomtest.products.api.ProductService
+import optrak.lagomtest.sites.api.SiteService
 import org.scalacheck._
 import org.scalacheck.Shapeless._
 // import org.scalacheck.Gen._
@@ -24,16 +26,19 @@ class OrderServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAf
     ServiceTest.defaultSetup
       .withCassandra(true)
   ) { ctx =>
-    new OrderApplication(ctx) with LocalServiceLocator
+    new OrderApplication(ctx) with LocalServiceLocator {
+      override lazy val productService: ProductService = ProductMock(Set(product1, product2))
+      override lazy val siteService: SiteService = SiteMock(Set(site1, site2))
+    }
   }
 
   val client = server.serviceClient.implement[OrderService]
 
   override protected def afterAll() = server.stop()
   
-  def createOrderData(order: Order) = OrderCreationData(site1, product1, quantity1)
+  def createOrderData(order: Order) = OrderCreationData(order.site, order.product, order.quantity)
 
-/*
+
   "order service" should {
 
     "create and retrieve order" in {
@@ -60,18 +65,41 @@ class OrderServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAf
       }
     }
 
+
+    "complain about bad product" in {
+      val exp = recoverToExceptionIf[TransportException](
+        for {
+          answer <- client.createOrder(tenantId, "badProduct").invoke(createOrderData(order1.copy(product = "junk")))
+        } yield {
+          answer should ===(Done)
+        })
+      exp.map { te =>
+        // println(s"te is code ${te.errorCode} message ${te.exceptionMessage}")
+        te.toString should include("Product tenant1:junk not found")
+      }
+    }
+    "complain about bad site" in {
+      val exp = recoverToExceptionIf[TransportException](
+        for {
+          answer <- client.createOrder(tenantId, "badSite").invoke(createOrderData(order1.copy(site = "junk")))
+        } yield {
+          answer should ===(Done)
+        })
+      exp.map { te =>
+        // println(s"te is code ${te.errorCode} message ${te.exceptionMessage}")
+        te.toString should include("Site tenant1:junk not found")
+      }
+    }
+
   }
-  */
   "reading" should {
-    def createP(implicit arb: Arbitrary[OrderCreationData]): Option[OrderCreationData] =
-      arb.arbitrary.sample
+    def createO(i: Int): OrderCreationData =
+      OrderCreationData(site1, product1, i)
 
     "create multiple orders for single tenant" in {
 
-      implicitly[Arbitrary[OrderCreationData]]
-
       // we're going to generate some arbitrary orders then check that they actually got created
-      val cps : List[OrderCreationData] = 0.to(10).flatMap( i => createP ).toList
+      val cps : List[OrderCreationData] = 0.to(10).map( i => createO(i) ).toList
       val orders: List[(OrderId, OrderCreationData)] = cps.zipWithIndex.map(t => (t._2.toString, t._1))
       val ordersCreated = orders.map {t =>
         Thread.sleep(1500)

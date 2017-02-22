@@ -13,6 +13,7 @@ import play.api.libs.ws.ahc.AhcWSComponents
 import OrderTestCommon._
 import optrak.lagomtest.orders.impl.OrderEvents.{OrderCreated, OrderEvent}
 import optrak.lagomtest.products.api.ProductService
+import optrak.lagomtest.sites.api.SiteService
 
 import scala.concurrent.Future
 
@@ -26,8 +27,8 @@ class OrderRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matc
     new OrderApplication(ctx) with OrderComponents with AhcWSComponents {
       override def serviceLocator = NoServiceLocator
       override lazy val readSide: ReadSideTestDriver = new ReadSideTestDriver
-
-      override lazy val productService = ???
+      override lazy val productService: ProductService = ProductMock(Set(product1, product2))
+      override lazy val siteService: SiteService = SiteMock(Set(site1, site2))
 
     }
   }

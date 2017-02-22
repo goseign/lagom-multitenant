@@ -39,7 +39,7 @@ trait ProductService extends Service {
 
   def getProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Product]
 
-  def productExists(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Boolean]
+  def checkProductExists(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Done] // exception if it doesn't
 
   def cancelProduct(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Done]
 

@@ -39,8 +39,8 @@ class OrderServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
   override def createOrder(tenantId: TenantId, id: OrderId): ServiceCall[OrderCreationData, Done] = ServiceCall { request =>
     logger.debug(s"creating order $id")
     for {
-      site <- siteService.getSite(tenantId, request.site).invoke()
-      product <- productService.getProduct(tenantId, request.product).invoke()
+      _ <- siteService.checkSiteExists(tenantId, request.site).invoke()
+      _ <- productService.checkProductExists(tenantId, request.product).invoke()
       res <- ref(tenantId, id).ask(CreateOrder(tenantId, id, request.site, request.product, request.quantity))
     } yield {
       logger.debug(s"created order $id")

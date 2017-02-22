@@ -37,6 +37,8 @@ trait SiteService extends Service {
 
   def getSite(tenant: TenantId, id: SiteId): ServiceCall[NotUsed, Site]
 
+  def checkSiteExists(tenant: TenantId, id: SiteId): ServiceCall[NotUsed, Done]
+
   def getSitesForTenant(tenant: TenantId): ServiceCall[NotUsed, SiteIds]
 
 

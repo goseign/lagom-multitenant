@@ -60,10 +60,10 @@ class ProductServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
     }
   }
 
-  override def productExists(tenantId: TenantId, id: ProductId): ServiceCall[NotUsed, Boolean] = ServiceCall { request =>
+  override def checkProductExists(tenantId: TenantId, id: ProductId): ServiceCall[NotUsed, Done] = ServiceCall { request =>
     ref(tenantId, id).ask(GetProduct).map {
-      case Some(product) => true
-      case None => false
+      case Some(product) => Done
+      case None => throw NotFound(s"Product ${ref(tenantId, id)} not found")
     }
   }
 

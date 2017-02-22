@@ -2,9 +2,11 @@ package optrak.lagomtest.orders.impl
 
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.ServiceCall
+import com.lightbend.lagom.scaladsl.api.transport.NotFound
 import optrak.lagomtest.data.Data._
 import optrak.lagomtest.orders.impl.OrderEvents.OrderCreated
 import optrak.lagomtest.products.api.{ProductCreationData, ProductIds, ProductService, ProductStatuses}
+import optrak.lagomtest.sites.api.{SiteCreationData, SiteIds, SiteService}
 
 import scala.concurrent.Future
 
@@ -36,8 +38,10 @@ object OrderTestCommon {
 
   case class ProductMock(valid: Set[ProductId]) extends ProductService {
 
-    override def productExists(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Boolean] = ServiceCall { _ =>
-      Future.successful(valid.contains(id))
+    override def checkProductExists(tenant: TenantId, id: ProductId): ServiceCall[NotUsed, Done] = ServiceCall { _ =>
+      if (valid.contains(id))
+        Future.successful(Done)
+      else throw throw NotFound(s"Product $tenantId:$id not found")
     }
 
     override def createProduct(tenant: TenantId, id: ProductId): ServiceCall[ProductCreationData, Done] = ???
@@ -59,4 +63,20 @@ object OrderTestCommon {
     override def getLiveProductsForTenantDb(tenantId: TenantId): ServiceCall[NotUsed, ProductIds] = ???
   }
 
+  case class SiteMock(valid: Set[SiteId]) extends SiteService {
+    override def createSite(tenant: TenantId, id: SiteId): ServiceCall[SiteCreationData, Done] = ???
+
+    override def updatePostcode(tenant: TenantId, id: SiteId, newPostcode: String): ServiceCall[NotUsed, Done] = ???
+
+    override def getSite(tenant: TenantId, id: SiteId): ServiceCall[NotUsed, Site] = ???
+
+    override def getSitesForTenant(tenant: TenantId): ServiceCall[NotUsed, SiteIds] = ???
+
+    override def checkSiteExists(tenant: TenantId, id: SiteId): ServiceCall[NotUsed, Done] = ServiceCall { _ =>
+      if (valid.contains(id))
+        Future.successful(Done)
+      else throw throw NotFound(s"Site $tenantId:$id not found")
+    }
+
+  }
 }

@@ -51,6 +51,14 @@ class SiteServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
     }
   }
 
+  override def checkSiteExists(tenantId: TenantId, id: SiteId): ServiceCall[NotUsed, Done] = ServiceCall { request =>
+    ref(tenantId, id).ask(GetSite).map {
+      case Some(site) => Done
+      case None => throw NotFound(s"Site ${ref(tenantId, id)} not found")
+    }
+  }
+
+
   override def getSitesForTenant(tenantId: TenantId): ServiceCall[NotUsed, SiteIds] = ServiceCall { _ =>
     siteRepository.selectSitesForTenant(tenantId)
   }
