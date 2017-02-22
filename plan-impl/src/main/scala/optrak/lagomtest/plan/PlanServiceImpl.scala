@@ -38,9 +38,6 @@ class PlanServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) extend
   override def updateProduct(planId: PlanId): ServiceCall[Data.Product, Done] =
     toPlan(planId, UpdateProduct)
 
-  override def addOrUpdateProduct(planId: PlanId): ServiceCall[Data.Product, Done] =
-    toPlan(planId, AddOrUpdateProduct)
-
   override def removeProduct(planId: PlanId): ServiceCall[ProductId, Done] =
     toPlan(planId, RemoveProduct)
 
@@ -50,12 +47,8 @@ class PlanServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) extend
   override def updateSite(planId: PlanId): ServiceCall[Data.Site, Done] =
     toPlan(planId, UpdateSite)
 
-  override def addOrUpdateSite(planId: PlanId): ServiceCall[Data.Site, Done] =
-    toPlan(planId, AddOrUpdateSite)
-
   override def removeSite(planId: PlanId): ServiceCall[SiteId, Done] =
     toPlan(planId, RemoveSite)
-
 
   override def planEvents(): Topic[PlanEvents.PlanEvent] = TopicProducer.taggedStreamWithOffset(PlanEvent.Tag.allTags.toList) { (tag, offset) =>
     persistentEntityRegistry.eventStream(tag, offset).map(t => (t.event, offset))
@@ -68,4 +61,26 @@ class PlanServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) extend
   override def site(planId: PlanId, siteId: SiteId): ServiceCall[NotUsed, Data.Site] = ???
 
   override def sites(planId: PlanId): ServiceCall[NotUsed, Seq[Data.Site]] = ???
+
+  override def addOrder(planId: PlanId): ServiceCall[Order, Done] = ???
+
+  override def updateOrder(planId: PlanId): ServiceCall[Order, Done] = ???
+
+
+  override def removeOrder(planId: PlanId): ServiceCall[OrderId, Done] = ???
+
+  override def addVehicle(planId: PlanId): ServiceCall[Vehicle, Done] = ???
+
+  override def updateVehicle(planId: PlanId): ServiceCall[Vehicle, Done] = ???
+
+  override def removeVehicle(planId: PlanId): ServiceCall[VehicleId, Done] = ???
+
+  override def vehicle(planId: PlanId, vehicleId: VehicleId): ServiceCall[NotUsed, Vehicle] = ???
+
+  override def vehicles(planId: PlanId): ServiceCall[NotUsed, Seq[Vehicle]] = ???
+
+  override def order(planId: PlanId, orderId: OrderId): ServiceCall[NotUsed, Order] = ???
+
+  override def orders(planId: PlanId): ServiceCall[NotUsed, Seq[Order]] = ???
+
 }

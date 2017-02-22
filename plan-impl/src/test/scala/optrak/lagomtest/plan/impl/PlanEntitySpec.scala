@@ -49,8 +49,11 @@ class PlanEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll with 
       outcome.events should contain(PlanCreated(planDescription))
       outcome.state === Some(PlanImpl(planDescription))
     }
+  }
 
-    "add product" in withTestDriver { driver =>
+  "Products" should {
+
+    "add with addOrUpdate product" in withTestDriver { driver =>
       val outcome1 = driver.run(CreatePlan(planDescription))
       val outcome = driver.run(AddOrUpdateProduct(planId, product1))
       outcome.replies === Vector(Done)
@@ -67,7 +70,6 @@ class PlanEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll with 
       outcome.events should contain(ProductRemoved(planId, product1.id))
       outcome.state === Some(PlanImpl(planDescription))
     }
-    // todo =- all the other tests
 
   }
 }
