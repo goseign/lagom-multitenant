@@ -5,7 +5,7 @@ import com.lightbend.lagom.scaladsl.api.transport.{TransportErrorCode, Transport
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import grizzled.slf4j.Logging
-import optrak.lagomtest.datamodel.Models._
+import optrak.lagomtest.data.Data._
 import optrak.lagomtest.orders.impl.OrderEvents._
 import optrak.lagomtest.utils.JsonFormats
 import play.api.libs.json.{Format, Json}

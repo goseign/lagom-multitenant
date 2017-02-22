@@ -4,7 +4,7 @@ import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import grizzled.slf4j.Logging
-import optrak.lagomtest.datamodel.Models.{Product, ProductId}
+import optrak.lagomtest.data.Data.{Product, ProductId}
 import optrak.lagomtest.products.impl.ProductEvents.ProductEvent
 import optrak.lagomtest.products.api.ProductEvents.{ProductCancelled => ApiProductCancelled, ProductCreated => ApiProductCreated, ProductEvent => ApiProductEvent}
 import optrak.lagomtest.products.api.{ProductIds, ProductStatus, ProductStatuses}

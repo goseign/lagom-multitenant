@@ -8,7 +8,7 @@ import com.lightbend.lagom.scaladsl.api.transport.NotFound
 import com.lightbend.lagom.scaladsl.broker.TopicProducer
 import com.lightbend.lagom.scaladsl.persistence.{EventStreamElement, PersistentEntityRegistry}
 import grizzled.slf4j.Logging
-import optrak.lagomtest.datamodel.Models.{Site, SiteId, TenantId}
+import optrak.lagomtest.data.Data.{Site, SiteId, TenantId}
 import optrak.lagomtest.sites.api.SiteEvents.{SiteCreated => ApiSiteCreated, SiteEvent => ApiSiteEvent}
 import optrak.lagomtest.sites.api._
 import optrak.lagomtest.sites.impl.SiteEvents.{SiteCreated, SiteEvent}

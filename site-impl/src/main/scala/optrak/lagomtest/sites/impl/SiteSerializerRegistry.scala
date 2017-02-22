@@ -1,9 +1,9 @@
 package optrak.lagomtest.sites.impl
 
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
-import optrak.lagomtest.datamodel.Models.{Site, SiteId}
+import optrak.lagomtest.data.Data.{Site, SiteId}
 import optrak.lagomtest.sites.impl.SiteEvents._
-import optrak.lagomtest.datamodel.ModelsJson._
+import optrak.lagomtest.data.DataJson._
 import optrak.lagomtest.sites.api.SiteIds
 
 import scala.collection.immutable.Seq

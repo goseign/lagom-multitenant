@@ -11,7 +11,7 @@ import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.products.api.{ProductCreationData, ProductService, ProductStatus, ProductStatuses}
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import ProductTestCommon._
-import optrak.lagomtest.datamodel.Models.{Product, ProductId}
+import optrak.lagomtest.data.Data.{Product, ProductId}
 import org.scalacheck._
 import org.scalacheck.Shapeless._
 // import org.scalacheck.Gen._

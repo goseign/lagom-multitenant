@@ -1,6 +1,6 @@
 package optrak.lagomtest.products.impl
 
-import optrak.lagomtest.datamodel.Models.{Product, ProductId, TenantId}
+import optrak.lagomtest.data.Data.{Product, ProductId, TenantId}
 
 
 /**

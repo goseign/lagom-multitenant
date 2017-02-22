@@ -4,8 +4,8 @@ import akka.{Done, NotUsed}
 import com.datastax.driver.core.utils.UUIDs
 import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
-import optrak.lagomtest.datamodel.Models
-import optrak.lagomtest.datamodel.Models.{ModelId, TenantId}
+import optrak.lagomtest.data.Data
+import optrak.lagomtest.data.Data.{PlanId, TenantId}
 import optrak.lagomtest.tenant
 import optrak.lagomtest.tenant.api.{ModelCreated, TenantService}
 
@@ -26,12 +26,12 @@ class TenantServiceImpl(persistentEntityRegistry: PersistentEntityRegistry, tena
     ref.ask(CreateModel(uuid, request.description))
   }
 
-  override def removeModel(tenantId: TenantId, modelId: ModelId): ServiceCall[NotUsed, Done] = ServiceCall { request =>
+  override def removeModel(tenantId: TenantId, modelId: PlanId): ServiceCall[NotUsed, Done] = ServiceCall { request =>
     val ref = persistentEntityRegistry.refFor[TenantEntity](tenantId)
     ref.ask(RemoveModel(modelId))
   }
 
-  override def getTenant(tenantId: TenantId): ServiceCall[NotUsed, Models.Tenant] = ???
+  override def getTenant(tenantId: TenantId): ServiceCall[NotUsed, Data.Tenant] = ???
 
   override def getAllTenants: ServiceCall[NotUsed, Seq[TenantId]] = ServiceCall { _ =>
     tenantRepository.selectAllTenants

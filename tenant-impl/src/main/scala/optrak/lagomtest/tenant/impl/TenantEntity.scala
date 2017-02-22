@@ -4,7 +4,7 @@ import akka.Done
 import com.lightbend.lagom.scaladsl.api.transport.{TransportErrorCode, TransportException}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
-import optrak.lagomtest.datamodel.Models._
+import optrak.lagomtest.data.Data._
 import TenantEvents.{TenantCreated, TenantEvent, ModelCreated, ModelRemoved}
 import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.utils.JsonFormats
@@ -70,8 +70,8 @@ class TenantEntity extends PersistentEntity {
     }.onEvent {
       // Event handler for the TenantChanged event
       case (ModelCreated(id, description), Some(tenant)) =>
-        Some(tenant.copy(models = tenant.models + ModelDescription(id, description)))
-      case (ModelRemoved(id: ModelId), Some(tenant)) =>
+        Some(tenant.copy(models = tenant.models + PlanDescription(id, description)))
+      case (ModelRemoved(id: PlanId), Some(tenant)) =>
         Some(tenant.copy(models = tenant.models.filterNot(_.id == id)))
     }
   }
@@ -80,8 +80,8 @@ class TenantEntity extends PersistentEntity {
 // --------------------------------- internal commands
 sealed trait TenantCommand
 case class CreateTenant(id: String, description: String) extends TenantCommand with ReplyType[Done]
-case class CreateModel(id: ModelId, description: String) extends TenantCommand with ReplyType[api.ModelCreated]
-case class RemoveModel(id: ModelId) extends TenantCommand with ReplyType[Done]
+case class CreateModel(id: PlanId, description: String) extends TenantCommand with ReplyType[api.ModelCreated]
+case class RemoveModel(id: PlanId) extends TenantCommand with ReplyType[Done]
 
 object CreateTenant {
   implicit def format: Format[CreateTenant] = Json.format[CreateTenant]

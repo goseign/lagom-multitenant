@@ -6,7 +6,7 @@ import akka.testkit.TestKit
 import com.datastax.driver.core.utils.UUIDs
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
-import optrak.lagomtest.datamodel.Models.{ModelDescription, Order}
+import optrak.lagomtest.data.Data.{PlanDescription, Order}
 import optrak.lagomtest.orders.impl.OrderEvents._
 import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
 import OrderTestCommon._

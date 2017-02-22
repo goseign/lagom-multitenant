@@ -11,7 +11,7 @@ import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.sites.api.{SiteCreationData, SiteService}
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import SiteTestCommon._
-import optrak.lagomtest.datamodel.Models.{Site, SiteId}
+import optrak.lagomtest.data.Data.{Site, SiteId}
 import org.scalacheck._
 import org.scalacheck.Shapeless._
 // import org.scalacheck.Gen._

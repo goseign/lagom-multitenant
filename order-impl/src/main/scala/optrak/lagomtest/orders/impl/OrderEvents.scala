@@ -3,7 +3,7 @@ package optrak.lagomtest.orders.impl
 import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag}
-import optrak.lagomtest.datamodel.Models._
+import optrak.lagomtest.data.Data._
 import play.api.libs.json.{Format, Json}
 /**
 * Created by tim on 22/01/17.

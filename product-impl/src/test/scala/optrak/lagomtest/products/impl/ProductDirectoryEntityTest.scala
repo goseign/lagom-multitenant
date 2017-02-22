@@ -6,7 +6,7 @@ import akka.testkit.TestKit
 import com.datastax.driver.core.utils.UUIDs
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
-import optrak.lagomtest.datamodel.Models.Product
+import optrak.lagomtest.data.Data.Product
 import optrak.lagomtest.products.api.ProductStatus
 import optrak.lagomtest.products.impl.ProductEvents.{ProductCreated, ProductEvent}
 import optrak.lagomtest.products.impl.ProductTestCommon._

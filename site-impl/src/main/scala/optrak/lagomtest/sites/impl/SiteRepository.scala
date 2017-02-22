@@ -7,7 +7,7 @@ import com.datastax.driver.core._
 import com.lightbend.lagom.scaladsl.persistence.{PersistentEntityRegistry, ReadSideProcessor}
 import com.lightbend.lagom.scaladsl.persistence.cassandra.{CassandraReadSide, CassandraSession}
 import grizzled.slf4j.Logging
-import optrak.lagomtest.datamodel.Models._
+import optrak.lagomtest.data.Data._
 import optrak.lagomtest.sites.api.SiteIds
 import optrak.lagomtest.sites.impl.SiteEvents.{SiteCreated, SiteEvent}
 

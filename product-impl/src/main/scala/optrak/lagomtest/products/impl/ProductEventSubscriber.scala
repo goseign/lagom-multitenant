@@ -3,7 +3,7 @@ package optrak.lagomtest.products.impl
 import akka.Done
 import akka.stream.scaladsl.Flow
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
-import optrak.lagomtest.datamodel.Models.TenantId
+import optrak.lagomtest.data.Data.TenantId
 import optrak.lagomtest.products.api.ProductEvents.{ProductEvent => ApiProductEvent}
 import optrak.lagomtest.products.api.ProductService
 import optrak.lagomtest.products.api.ProductEvents.{ProductCancelled => ApiProductCancelled, ProductCreated => ApiProductCreated, ProductEvent => ApiProductEvent}

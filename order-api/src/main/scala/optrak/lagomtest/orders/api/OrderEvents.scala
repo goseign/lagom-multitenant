@@ -2,8 +2,8 @@ package optrak.lagomtest.orders.api
 
 import com.lightbend.lagom.scaladsl.api.broker.Topic
 import play.api.libs.json._
-import optrak.lagomtest.datamodel.Models._
-import optrak.lagomtest.datamodel.ModelsJson._
+import optrak.lagomtest.data.Data._
+import optrak.lagomtest.data.DataJson._
 
 /**
 * Created by tim on 22/01/17.

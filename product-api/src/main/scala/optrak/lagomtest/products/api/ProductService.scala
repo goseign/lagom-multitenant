@@ -6,8 +6,8 @@ import com.lightbend.lagom.scaladsl.api.broker.Topic
 import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import play.api.libs.json.{Format, Json}
-import optrak.lagomtest.datamodel.Models._
-import optrak.lagomtest.datamodel.ModelsJson._
+import optrak.lagomtest.data.Data._
+import optrak.lagomtest.data.DataJson._
 import optrak.lagomtest.products.api.ProductEvents.ProductEvent
 
 /**

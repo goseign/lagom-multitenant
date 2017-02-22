@@ -3,10 +3,10 @@ package optrak.lagomtest.tenant.api
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
-import optrak.lagomtest.datamodel.Models._
+import optrak.lagomtest.data.Data._
 import optrak.lagomtest.utils.JsonFormats
 import play.api.libs.json.{Format, Json}
-import optrak.lagomtest.datamodel.ModelsJson._
+import optrak.lagomtest.data.DataJson._
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -17,7 +17,7 @@ trait TenantService extends Service {
 
   def createModel(tenantId: TenantId): ServiceCall[ModelCreationData, ModelCreated]
 
-  def removeModel(tenantId: TenantId, modelId: ModelId): ServiceCall[NotUsed, Done]
+  def removeModel(tenantId: TenantId, modelId: PlanId): ServiceCall[NotUsed, Done]
 
   def getTenant(tenantId: TenantId): ServiceCall[NotUsed, Tenant]
 
@@ -52,7 +52,7 @@ object ModelCreationData {
 }
 
 // responses
-case class ModelCreated(id: ModelId)
+case class ModelCreated(id: PlanId)
 
 object ModelCreated {
   implicit def format: Format[ModelCreated] = Json.format[ModelCreated]

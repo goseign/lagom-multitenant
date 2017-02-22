@@ -4,7 +4,7 @@ import akka.Done
 import com.datastax.driver.core._
 import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor
 import com.lightbend.lagom.scaladsl.persistence.cassandra.{CassandraReadSide, CassandraSession}
-import optrak.lagomtest.datamodel.Models.TenantId
+import optrak.lagomtest.data.Data.TenantId
 import optrak.lagomtest.tenant.impl.TenantEvents.{TenantCreated, TenantEvent}
 
 import scala.concurrent.{ExecutionContext, Future}

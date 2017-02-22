@@ -1,6 +1,6 @@
 package optrak.lagomtest.orders.impl
 
-import optrak.lagomtest.datamodel.Models.{Order, OrderId, TenantId}
+import optrak.lagomtest.data.Data.{Order, OrderId, TenantId}
 import optrak.lagomtest.orders.impl.OrderEvents.OrderCreated
 
 

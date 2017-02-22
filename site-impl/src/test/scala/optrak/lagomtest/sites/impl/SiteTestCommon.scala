@@ -1,6 +1,6 @@
 package optrak.lagomtest.sites.impl
 
-import optrak.lagomtest.datamodel.Models.{Site, SiteId, TenantId}
+import optrak.lagomtest.data.Data.{Site, SiteId, TenantId}
 
 
 /**

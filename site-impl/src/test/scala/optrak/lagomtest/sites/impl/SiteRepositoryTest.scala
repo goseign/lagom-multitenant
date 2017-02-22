@@ -6,7 +6,7 @@ import akka.persistence.query.Sequence
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.server.LagomApplication
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
-import optrak.lagomtest.datamodel.Models.SiteId
+import optrak.lagomtest.data.Data.SiteId
 import optrak.lagomtest.sites.impl.SiteEvents.{SiteCreated, SiteEvent}
 import optrak.lagomtest.utils.ReadSideTestDriver
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}

@@ -40,18 +40,18 @@ val stdImplDependencies = Seq(
     macwire
 ))
 
-lazy val `model-api` = (project in file("model-api"))
+lazy val `plan-api` = (project in file("plan-api"))
   .settings(kafkaApiDependencies :_*)
   .dependsOn(`datamodel`)
 
-lazy val `model-impl` = (project in file("model-impl"))
+lazy val `plan-impl` = (project in file("plan-impl"))
   .enablePlugins(LagomScala)
   .settings(stdImplDependencies :_*)
   .settings(testDependencies :_*)
   .settings(lagomForkedTestSettings: _*)
   .dependsOn(`datamodel`)
   .dependsOn(`utils`)
-  .dependsOn(`model-api`)
+  .dependsOn(`plan-api`)
 
 lazy val `product-api` = (project in file("product-api"))
   .settings(stdApiDependencies :_*)
@@ -93,22 +93,34 @@ lazy val `order-impl` = (project in file("order-impl"))
   .dependsOn(`order-api`)
   .dependsOn(`product-api`)
 
-
-lazy val `model-reader-api` = (project in file("model-reader-api"))
-  .settings(kafkaApiDependencies :_*)
+lazy val `vehicle-api` = (project in file("vehicle-api"))
+  .settings(stdApiDependencies :_*)
   .dependsOn(`datamodel`)
-  .dependsOn(`model-api`)
 
-lazy val `model-reader-impl` = (project in file("model-reader-impl"))
+lazy val `vehicle-impl` = (project in file("vehicle-impl"))
   .enablePlugins(LagomScala)
   .settings(stdImplDependencies :_*)
   .settings(testDependencies :_*)
   .settings(lagomForkedTestSettings: _*)
   .dependsOn(`datamodel`)
   .dependsOn(`utils`)
-  .dependsOn(`model-api`)
-  .dependsOn(`model-reader-api`)
-  .dependsOn(`model-impl` % "test")
+  .dependsOn(`vehicle-api`)
+
+lazy val `plan-reader-api` = (project in file("plan-reader-api"))
+  .settings(kafkaApiDependencies :_*)
+  .dependsOn(`datamodel`)
+  .dependsOn(`plan-api`)
+
+lazy val `plan-reader-impl` = (project in file("plan-reader-impl"))
+  .enablePlugins(LagomScala)
+  .settings(stdImplDependencies :_*)
+  .settings(testDependencies :_*)
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
+  .dependsOn(`plan-api`)
+  .dependsOn(`plan-reader-api`)
+  .dependsOn(`plan-impl` % "test")
 
 
 lazy val `tenant-api` = (project in file("tenant-api"))
@@ -145,6 +157,6 @@ lazy val `integration` = (project in file("integration"))
 
   )
   .settings(lagomForkedTestSettings: _*)
-  .dependsOn(`model-impl` % "test")
-  .dependsOn(`model-reader-impl` % "test")
+  .dependsOn(`plan-impl` % "test")
+  .dependsOn(`plan-reader-impl` % "test")
 

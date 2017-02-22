@@ -8,7 +8,7 @@ import com.lightbend.lagom.scaladsl.api.transport.NotFound
 import com.lightbend.lagom.scaladsl.broker.TopicProducer
 import com.lightbend.lagom.scaladsl.persistence.{EventStreamElement, PersistentEntityRegistry}
 import grizzled.slf4j.Logging
-import optrak.lagomtest.datamodel.Models.{Product, ProductId, TenantId}
+import optrak.lagomtest.data.Data.{Product, ProductId, TenantId}
 import optrak.lagomtest.products.api.ProductEvents.{ProductCancelled => ApiProductCancelled, ProductCreated => ApiProductCreated, ProductEvent => ApiProductEvent}
 import optrak.lagomtest.products.api._
 import optrak.lagomtest.products.impl.ProductEvents.{ProductCreated, ProductEvent}

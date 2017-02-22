@@ -7,7 +7,7 @@ import com.datastax.driver.core.utils.UUIDs
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
 import TenantEvents.{TenantCreated, TenantEvent, ModelCreated, ModelRemoved}
-import optrak.lagomtest.datamodel.Models.{Tenant, ModelDescription}
+import optrak.lagomtest.data.Data.{Tenant, PlanDescription}
 import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
 import optrak.lagomtest.tenant.api.{ModelCreated => ApiModelCreated}
 /**
@@ -48,7 +48,7 @@ class TenantEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll wit
       val outcome = driver.run(CreateModel(modelId, "nice model"))
       outcome.replies === Vector(ApiModelCreated(modelId))
       outcome.events should contain(ModelCreated(modelId, "nice model"))
-      outcome.state === Some(Tenant(tenantId, Set(ModelDescription(modelId, "nice model")), "hello"))
+      outcome.state === Some(Tenant(tenantId, Set(PlanDescription(modelId, "nice model")), "hello"))
     }
 
 
