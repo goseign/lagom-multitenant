@@ -19,20 +19,20 @@ object OrderTestCommon {
 
   val tenantId = "tenant1"
   val tenant2 = "tenant2"
-  val product1 = "product1"
-  val product2 = "product2"
-  val site1 = "site1"
-  val site2 = "site2"
+  val product1Id = "product1"
+  val product2Id = "product2"
+  val site1Id = "site1"
+  val site2Id = "site2"
   val order1Id = "order1"
   val quantity1 = 10
   val order2Id = "order2"
   val quantity2 = 2
-  val order1 = Order(order1Id, site1, product1, quantity1)
-  val order2 = Order(order2Id, site2, product1, quantity2)
+  val order1 = Order(order1Id, site1Id, product1Id, quantity1)
+  val order2 = Order(order2Id, site2Id, product1Id, quantity2)
   val order1sz9 = order1.copy(quantity = 9)
 
-  val createOrder1 = CreateOrder(tenantId, order1Id, site1, product1, quantity1)
-  val order1Created = OrderCreated(tenantId, order1Id, site1, product1, quantity1)
+  val createOrder1 = CreateOrder(tenantId, order1Id, site1Id, product1Id, quantity1)
+  val order1Created = OrderCreated(tenantId, order1Id, site1Id, product1Id, quantity1)
 
   def entityId(tenantId: TenantId, orderId: OrderId) = s"$tenantId:$orderId"
 

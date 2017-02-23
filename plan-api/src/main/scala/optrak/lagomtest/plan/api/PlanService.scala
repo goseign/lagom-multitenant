@@ -7,9 +7,10 @@ import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, Partition
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.data.Data._
 import optrak.lagomtest.data.DataJson._
+import optrak.lagomtest.plan.api.PlanEntityErrors._
 import optrak.lagomtest.plan.api.PlanEvents._
+import optrak.lagomtest.plan.api.PlanService.CheckedResult
 import play.api.libs.json.{Format, Json}
-
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -18,6 +19,15 @@ import play.api.libs.json.{Format, Json}
 object PlanService {
   def topicName = "PlanTopic"
 
+  trait ErrorMessage extends Throwable {
+    def planId: PlanId
+  }
+
+  case class CheckedResult[T <: ErrorMessage](result: Option[T])
+
+  object CheckedResult {
+    def empty[T <: ErrorMessage] = new CheckedResult[T](None)
+  }
 
   case class SimplePlan(
                          id: PlanId,
@@ -45,12 +55,12 @@ object PlanService {
 
 trait PlanService extends Service {
 
-  def createPlan(planId: PlanId): ServiceCall[String, Done]
+  def createPlan(planId: PlanId): ServiceCall[String, CheckedResult[PlanAlreadyExistsError]]
 
   // product CRUD
   def addProduct(planId: PlanId): ServiceCall[Product, Done]
 
-  def updateProduct(planId: PlanId): ServiceCall[Product, Done]
+  def updateProduct(planId: PlanId): ServiceCall[Product, CheckedResult[ProductNotDefinedError]]
 
   def removeProduct(planId: PlanId): ServiceCall[ProductId, Done]
 
@@ -97,10 +107,10 @@ trait PlanService extends Service {
     import Service._
 
     named("plan").withCalls(
-      pathCall("/optrak.plan.api/createPlan/:id", createPlan _),
+      // pathCall("/optrak.plan.api/createPlan/:id", createPlan _),
 
       pathCall("/optrak.plan.api/addProduct/:id", addProduct _),
-      pathCall("/optrak.plan.api/updateProduct/:id", updateProduct _),
+      // pathCall("/optrak.plan.api/updateProduct/:id", updateProduct _),
       pathCall("/optrak.plan.api/removeProduct/:id", removeProduct _),
 
       pathCall("/optrak.plan.api/addSite/:id", addSite _),
@@ -127,15 +137,17 @@ trait PlanService extends Service {
       pathCall("/optrak.plan.api/vehicle/:planId", vehicles _)
 
 
+/*
     ).withTopics(
       topic(PlanService.topicName, planEvents)
       .addProperty(KafkaProperties.partitionKeyStrategy,
       PartitionKeyStrategy[PlanEvent](_.planId.toString))
+*/
     )
     .withAutoAcl(true)
 
   }
-  def planEvents() : Topic[PlanEvent]
+  // def planEvents() : Topic[PlanEvent]
 
 }
 

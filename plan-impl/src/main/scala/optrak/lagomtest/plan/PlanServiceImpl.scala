@@ -10,6 +10,8 @@ import optrak.lagomtest.data.Data._
 import optrak.lagomtest.plan.api.PlanEvents._
 import optrak.lagomtest.plan.api.{PlanEvents, PlanService}
 import optrak.lagomtest.plan.PlanCommands._
+import optrak.lagomtest.plan.api.PlanEntityErrors.{PlanAlreadyExistsError, ProductNotDefinedError}
+import optrak.lagomtest.plan.api.PlanService.CheckedResult
 
 /**
   * Created by tim on 26/01/17.
@@ -28,16 +30,23 @@ class PlanServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) extend
       ref.ask(f(planId, request))
     }
 
-  override def createPlan(planId: PlanId): ServiceCall[String, Done] =
-    toPlan(planId, ( (mid, req) => CreatePlan(PlanDescription(mid, req))))
+  override def createPlan(planId: PlanId): ServiceCall[String, CheckedResult[PlanAlreadyExistsError]] = ???
+    //toPlan(planId, ( (mid, req) => CreatePlan(PlanDescription(mid, req))))
 
   override def addProduct(planId: PlanId): ServiceCall[Data.Product, Done] =
     toPlan(planId, AddProduct)
 
 
-  override def updateProduct(planId: PlanId): ServiceCall[Data.Product, Done] =
-    toPlan(planId, UpdateProduct)
+  override def updateProduct(planId: PlanId): ServiceCall[Data.Product, CheckedResult[ProductNotDefinedError]] = ??? /*{
+    ServiceCall { request =>
+      val ref = persistentEntityRegistry.refFor[PlanEntity](planId.toString)
+      val response = ref.ask(UpdateProduct(planId, request))
+      println(s"update product response is <$response >")
+      response
+    }
 
+  }
+*/
   override def removeProduct(planId: PlanId): ServiceCall[ProductId, Done] =
     toPlan(planId, RemoveProduct)
 
@@ -50,9 +59,11 @@ class PlanServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) extend
   override def removeSite(planId: PlanId): ServiceCall[SiteId, Done] =
     toPlan(planId, RemoveSite)
 
+/*
   override def planEvents(): Topic[PlanEvents.PlanEvent] = TopicProducer.taggedStreamWithOffset(PlanEvent.Tag.allTags.toList) { (tag, offset) =>
     persistentEntityRegistry.eventStream(tag, offset).map(t => (t.event, offset))
   }
+*/
 
   override def product(planId: PlanId, productId: ProductId): ServiceCall[NotUsed, Data.Product] = ???
 

@@ -27,8 +27,8 @@ class OrderServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAf
       .withCassandra(true)
   ) { ctx =>
     new OrderApplication(ctx) with LocalServiceLocator {
-      override lazy val productService: ProductService = ProductMock(Set(product1, product2))
-      override lazy val siteService: SiteService = SiteMock(Set(site1, site2))
+      override lazy val productService: ProductService = ProductMock(Set(product1Id, product2Id))
+      override lazy val siteService: SiteService = SiteMock(Set(site1Id, site2Id))
     }
   }
 
@@ -94,7 +94,7 @@ class OrderServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAf
   }
   "reading" should {
     def createO(i: Int): OrderCreationData =
-      OrderCreationData(site1, product1, i)
+      OrderCreationData(site1Id, product1Id, i)
 
     "create multiple orders for single tenant" in {
 

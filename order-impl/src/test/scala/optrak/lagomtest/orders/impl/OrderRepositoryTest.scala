@@ -27,8 +27,8 @@ class OrderRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matc
     new OrderApplication(ctx) with OrderComponents with AhcWSComponents {
       override def serviceLocator = NoServiceLocator
       override lazy val readSide: ReadSideTestDriver = new ReadSideTestDriver
-      override lazy val productService: ProductService = ProductMock(Set(product1, product2))
-      override lazy val siteService: SiteService = SiteMock(Set(site1, site2))
+      override lazy val productService: ProductService = ProductMock(Set(product1Id, product2Id))
+      override lazy val siteService: SiteService = SiteMock(Set(site1Id, site2Id))
 
     }
   }
@@ -42,7 +42,7 @@ class OrderRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matc
 
   "The order event processor" should {
     "create a order" in {
-      val orderCreated = OrderCreated(tenantId, order1Id, site1, product1, quantity1)
+      val orderCreated = OrderCreated(tenantId, order1Id, site1Id, product1Id, quantity1)
       for {
         _ <- feed(entityId(tenantId, order1Id), orderCreated)
         orders <- getOrders
@@ -52,7 +52,7 @@ class OrderRepositoryTest extends AsyncWordSpec with BeforeAndAfterAll with Matc
     }
 
     "create another order" in {
-      val orderCreated = OrderCreated(tenantId, order2Id, site2, product2, quantity2)
+      val orderCreated = OrderCreated(tenantId, order2Id, site2Id, product2Id, quantity2)
       for {
         _ <- feed(entityId(tenantId, order2Id), orderCreated)
         allOrders <- getOrders

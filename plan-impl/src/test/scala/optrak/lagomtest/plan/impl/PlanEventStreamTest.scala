@@ -15,6 +15,7 @@ import optrak.lagomtest.plan.api.PlanEvents.{PlanCreated, ProductRemoved, Produc
 import optrak.lagomtest.plan.api.PlanService
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 
+/*
 class PlanEventStreamTest extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
 
   private val server = ServiceTest.startServer(
@@ -67,3 +68,4 @@ class PlanEventStreamTest extends AsyncWordSpec with Matchers with BeforeAndAfte
     }
   }
 }
+*/

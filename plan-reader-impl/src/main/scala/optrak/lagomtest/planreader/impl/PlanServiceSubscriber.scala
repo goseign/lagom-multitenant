@@ -12,12 +12,12 @@ import optrak.lagomtest.plan.api.PlanEvents.PlanEvent
 import optrak.lagomtest.plan.api.PlanService
 
 class PlanServiceSubscriber(persistentEntityRegistry: PersistentEntityRegistry, planService: PlanService) {
-
+/*
   planService.planEvents.subscribe.atLeastOnce(Flow[PlanEvent].mapAsync(1) {
     case me: PlanEvent =>
       val planId = me.planId
       entityRef(planId).ask(WrappedPlanEvent(me))
-  })
+  })*/
 
 
   private def entityRef(itemId: UUID) = persistentEntityRegistry.refFor[PlanReaderEntity](itemId.toString)

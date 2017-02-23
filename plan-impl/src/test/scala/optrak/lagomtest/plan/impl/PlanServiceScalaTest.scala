@@ -6,6 +6,7 @@ package optrak.lagomtest.plan.impl
   */
 import akka.Done
 import com.datastax.driver.core.utils.UUIDs
+import com.lightbend.lagom.scaladsl.api.transport.DeserializationException
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.data.Data.Product
@@ -40,7 +41,26 @@ class PlanServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAft
       }
     }
 
-    "add product" in {
+    "update non existent product" in {
+      val x = for {
+        answer <- planService.updateProduct(planId).invoke(product1)
+      } yield {
+        answer should ===(Done)
+      }
+      println(s"result is $x")
+      x should === ("hi")
+    }
+      /*"update 1 non existent product" in {
+        a [DeserializationException] should be thrownBy (for {
+          answer <- planService.updateProduct(planId).invoke(product1)
+        } yield {
+          answer should === (Done)
+        })
+
+      }*/
+
+
+    /*"add product" in {
       for {
         answer <- planService.addProduct(planId).invoke(product1)
       } yield {
@@ -48,12 +68,17 @@ class PlanServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAft
       }
     }
 
-    "removed plan" in {
+
+
+
+
+
+    "removed product" in {
       for {
         answer <- planService.removeProduct(planId).invoke(product1.id)
       } yield {
         answer should === (Done)
       }
-    }
+    }*/
   }
 }

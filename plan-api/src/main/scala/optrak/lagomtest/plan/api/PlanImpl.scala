@@ -1,6 +1,8 @@
 package optrak.lagomtest.plan.api
 
 import optrak.lagomtest.data.Data._
+import play.api.libs.json._
+import optrak.lagomtest.data.DataJson._
 
 /**
   * Created by tim on 22/02/17.
@@ -34,5 +36,5 @@ object PlanImpl {
             tripsM: Map[TripId, Trip] = Map.empty): PlanImpl =
     new PlanImpl (planDescription.id, planDescription.description, productsM, sitesM, ordersM, vehiclesM, tripsM)
 
-
+  implicit val format = Json.format[PlanImpl]
 }

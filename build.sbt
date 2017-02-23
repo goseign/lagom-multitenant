@@ -6,11 +6,17 @@ version in ThisBuild := "1.0-SNAPSHOT"
 // the Scala version that will be used for cross-compiled libraries
 scalaVersion in ThisBuild := "2.11.8"
 
+val latestIntegration = "latest.integration"
+
 val clapper = "org.clapper" % "grizzled-slf4j_2.11" % "1.3.0"
 val macwire = "com.softwaremill.macwire" %% "macros" % "2.2.5" % "provided"
 val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1" % Test
 val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.4" % Test
 val scalaCheckShapeless = "com.github.alexarchambault" %% "scalacheck-shapeless_1.13" % "1.1.3" % Test
+val csvXls = "com.optrak" %% "csv-xls" % latestIntegration
+val optrakJson = "com.optrak" %% "scala-json" % latestIntegration
+val optrakXml = "com.optrak" %% "scala-xml" % latestIntegration
+
 
 val testDependencies = Seq(libraryDependencies ++= Seq(
     scalaTest,
@@ -22,6 +28,7 @@ val testDependencies = Seq(libraryDependencies ++= Seq(
 
 val stdApiDependencies = Seq(libraryDependencies ++= Seq(
   lagomScaladslApi,
+  optrakJson,
   clapper
 ))
 
@@ -52,6 +59,10 @@ lazy val `plan-impl` = (project in file("plan-impl"))
   .dependsOn(`datamodel`)
   .dependsOn(`utils`)
   .dependsOn(`plan-api`)
+  .dependsOn(`product-impl` % "test->test")
+  .dependsOn(`site-impl` % "test->test")
+  .dependsOn(`vehicle-impl` % "test->test")
+  .dependsOn(`order-impl` % "test->test")
 
 lazy val `product-api` = (project in file("product-api"))
   .settings(stdApiDependencies :_*)
