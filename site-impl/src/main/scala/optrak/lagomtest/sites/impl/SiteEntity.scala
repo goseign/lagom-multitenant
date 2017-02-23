@@ -7,8 +7,6 @@ import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import grizzled.slf4j.Logging
 import optrak.lagomtest.data.Data._
 import optrak.lagomtest.sites.impl.SiteEvents._
-import optrak.lagomtest.utils.JsonFormats
-import play.api.libs.json.{Format, Json}
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -84,19 +82,7 @@ sealed trait SiteDoCommand extends SiteCommand with ReplyType[Done]
 case class CreateSite(tenantId: TenantId, id: String, postcode: String) extends SiteDoCommand
 case class UpdateSitePostcode(tenantId: TenantId, id: String, newPostcode: String) extends SiteDoCommand
 
-case object GetSite extends SiteCommand with ReplyType[Option[Site]] {
-  implicit def format: Format[GetSite.type] = JsonFormats.singletonFormat(GetSite)
-}
-
-object CreateSite {
-  implicit def format: Format[CreateSite] = Json.format[CreateSite]
-}
-
-object UpdateSitePostcode {
-  implicit def format: Format[UpdateSitePostcode] = Json.format[UpdateSitePostcode]
-}
-
-
+case object GetSite extends SiteCommand with ReplyType[Option[Site]]
 
 
 

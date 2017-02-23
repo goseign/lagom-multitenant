@@ -81,21 +81,8 @@ class PlanReaderEntity extends PersistentEntity {
 trait PlanReaderCommand
 case class WrappedPlanEvent(planEvent: PlanEvent) extends PlanReaderCommand with ReplyType[Done]
 
-object WrappedPlanEvent {
-  implicit val format : Format[WrappedPlanEvent] = Format[WrappedPlanEvent](
-    Reads[WrappedPlanEvent] { js =>
-      PlanEvents.reads.reads(js).map { ev => WrappedPlanEvent(ev)}
-    } ,
-    Writes { o =>
-      PlanEvents.writes.writes(o.planEvent)
-    }
-  )
-}
 
-
-case object GetPlan extends PlanReaderCommand with ReplyType[SimplePlan] {
-  implicit def format: Format[GetPlan.type] = JsonFormats.singletonFormat(GetPlan)
-}
+case object GetPlan extends PlanReaderCommand with ReplyType[SimplePlan]
 
 
 

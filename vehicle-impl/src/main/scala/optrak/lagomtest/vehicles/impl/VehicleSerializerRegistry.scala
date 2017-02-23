@@ -2,7 +2,8 @@ package optrak.lagomtest.vehicles.impl
 
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
 import optrak.lagomtest.data.Data.Vehicle
-import optrak.lagomtest.data.DataJson._
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
 import optrak.lagomtest.vehicles.api.VehicleIds
 import optrak.lagomtest.vehicles.impl.VehicleEvents._
 

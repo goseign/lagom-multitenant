@@ -7,8 +7,8 @@ import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import grizzled.slf4j.Logging
 import optrak.lagomtest.data.Data._
 import optrak.lagomtest.orders.impl.OrderEvents._
-import optrak.lagomtest.utils.JsonFormats
-import play.api.libs.json.{Format, Json}
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -84,17 +84,7 @@ sealed trait OrderDoCommand extends OrderCommand with ReplyType[Done]
 case class CreateOrder(tenantId: TenantId, id: String, siteId: SiteId, productId: ProductId, quantity: Int) extends OrderDoCommand
 case class UpdateOrderQuantity(tenantId: TenantId, id: String, newQuantity: Int) extends OrderDoCommand
 
-case object GetOrder extends OrderCommand with ReplyType[Option[Order]] {
-  implicit def format: Format[GetOrder.type] = JsonFormats.singletonFormat(GetOrder)
-}
-
-object CreateOrder {
-  implicit def format: Format[CreateOrder] = Json.format[CreateOrder]
-}
-
-object UpdateOrderQuantity {
-  implicit def format: Format[UpdateOrderQuantity] = Json.format[UpdateOrderQuantity]
-}
+case object GetOrder extends OrderCommand with ReplyType[Option[Order]]
 
 
 

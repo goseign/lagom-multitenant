@@ -25,12 +25,5 @@ object VehicleEvents {
   case class VehicleCreated(tenantId: TenantId, vehicleId: VehicleId, capacity: Int) extends VehicleEvent
   case class VehicleCapacityUpdated(tenantId: TenantId, vehicleId: VehicleId, newCapacity: Int) extends VehicleEvent
 
-  object VehicleCreated {
-    implicit def format: Format[VehicleCreated] = Json.format[VehicleCreated]
-  }
-
-  object VehicleCapacityUpdated {
-    implicit def format: Format[VehicleCapacityUpdated] = Json.format[VehicleCapacityUpdated]
-  }
 
 }

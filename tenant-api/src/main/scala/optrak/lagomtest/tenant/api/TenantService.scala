@@ -4,9 +4,10 @@ import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.utils.JsonFormats
-import play.api.libs.json.{Format, Json}
-import optrak.lagomtest.data.DataJson._
+import play.api.libs.json._
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
+import optrak.scalautils.json.JsonParser
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -22,6 +23,9 @@ trait TenantService extends Service {
   def getTenant(tenantId: TenantId): ServiceCall[NotUsed, Tenant]
 
   def getAllTenants: ServiceCall[NotUsed, Seq[TenantId]]
+
+  implicitly[JsonParser[ModelCreationData]]
+  implicitly[JsonParser[ModelCreated]]
 
   override final def descriptor = {
     import Service._
@@ -43,17 +47,5 @@ sealed trait TenantApiCommand
 case class TenantCreationData(description: String) extends TenantApiCommand with ReplyType[Done]
 case class ModelCreationData(description: String) extends TenantApiCommand with ReplyType[ModelCreated]
 
-object TenantCreationData {
-  implicit def format: Format[TenantCreationData] = Json.format[TenantCreationData]
-}
-
-object ModelCreationData {
-  implicit def format: Format[ModelCreationData] = Json.format[ModelCreationData]
-}
-
 // responses
 case class ModelCreated(id: PlanId)
-
-object ModelCreated {
-  implicit def format: Format[ModelCreated] = Json.format[ModelCreated]
-}

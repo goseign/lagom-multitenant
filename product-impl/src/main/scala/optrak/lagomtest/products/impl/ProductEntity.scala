@@ -7,8 +7,6 @@ import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import grizzled.slf4j.Logging
 import optrak.lagomtest.data.Data._
 import optrak.lagomtest.products.impl.ProductEvents._
-import optrak.lagomtest.utils.JsonFormats
-import play.api.libs.json.{Format, Json}
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -99,23 +97,7 @@ case class UpdateProductSize(tenantId: TenantId, id: String, newSize: Int) exten
 case class UpdateProductGroup(tenantId: TenantId, id: String, newGroup: String) extends ProductDoCommand
 case class CancelProduct(tenantId: TenantId, id: String) extends ProductDoCommand
 
-case object GetProduct extends ProductCommand with ReplyType[Option[Product]] {
-  implicit def format: Format[GetProduct.type] = JsonFormats.singletonFormat(GetProduct)
-}
-
-object CreateProduct {
-  implicit def format: Format[CreateProduct] = Json.format[CreateProduct]
-}
-
-object UpdateProductSize {
-  implicit def format: Format[UpdateProductSize] = Json.format[UpdateProductSize]
-}
-object UpdateProductGroup {
-  implicit def format: Format[UpdateProductGroup] = Json.format[UpdateProductGroup]
-}
-object CancelProduct {
-  implicit def format: Format[CancelProduct] = Json.format[CancelProduct]
-}
+case object GetProduct extends ProductCommand with ReplyType[Option[Product]]
 
 
 

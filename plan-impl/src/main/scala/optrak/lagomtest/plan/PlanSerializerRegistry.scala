@@ -5,6 +5,8 @@ import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegi
 import optrak.lagomtest.plan.api.PlanEvents._
 import optrak.lagomtest.plan.PlanCommands._
 import optrak.lagomtest.plan.api.PlanImpl
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
 
 import scala.collection.immutable.Seq
 

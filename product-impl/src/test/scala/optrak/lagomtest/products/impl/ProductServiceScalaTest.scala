@@ -33,7 +33,7 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
   
   def createProductData(product: Product) = ProductCreationData(product.size, product.group) 
 
-/*
+
   "product service" should {
 
     "create and retrieve product" in {
@@ -61,7 +61,7 @@ class ProductServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     }
 
   }
-  */
+
   "reading" should {
     def createP(implicit arb: Arbitrary[ProductCreationData]): Option[ProductCreationData] =
       arb.arbitrary.sample

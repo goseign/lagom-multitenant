@@ -1,16 +1,13 @@
 package optrak.lagomtest.plan.api
 
 import akka.{Done, NotUsed}
-import com.lightbend.lagom.scaladsl.api.Service.pathCall
-import com.lightbend.lagom.scaladsl.api.broker.Topic
-import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.data.DataJson._
 import optrak.lagomtest.plan.api.PlanEntityErrors._
-import optrak.lagomtest.plan.api.PlanEvents._
 import optrak.lagomtest.plan.api.PlanService.CheckedResult
-import play.api.libs.json.{Format, Json}
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
+
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -37,8 +34,6 @@ object PlanService {
                          orders: Set[Order],
                          vehicles: Set[Vehicle],
                          trips: Set[Trip])
-
-  implicit val formatPlan: Format[SimplePlan] = Json.format[SimplePlan]
 
   object SimplePlan {
     def apply(planDescription: PlanDescription): SimplePlan =

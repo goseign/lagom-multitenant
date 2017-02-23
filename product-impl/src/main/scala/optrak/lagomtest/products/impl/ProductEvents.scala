@@ -1,10 +1,7 @@
 package optrak.lagomtest.products.impl
 
-import akka.Done
-import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag}
 import optrak.lagomtest.data.Data.{PlanId, ProductId, TenantId}
-import play.api.libs.json.{Format, Json}
 /**
 * Created by tim on 22/01/17.
 * Copyright Tim Pigden, Hertford UK
@@ -29,18 +26,5 @@ object ProductEvents {
   case class ProductGroupUpdated(tenantId: TenantId, productId: ProductId, newGroup: String) extends ProductEvent
   case class ProductCancelled(tenantId: TenantId, productId: ProductId) extends ProductEvent
 
-  object ProductCreated {
-    implicit def format: Format[ProductCreated] = Json.format[ProductCreated]
-  }
-
-  object ProductSizeUpdated {
-    implicit def format: Format[ProductSizeUpdated] = Json.format[ProductSizeUpdated]
-  }
-  object ProductGroupUpdated {
-    implicit def format: Format[ProductGroupUpdated] = Json.format[ProductGroupUpdated]
-  }
-  object ProductCancelled {
-    implicit def format: Format[ProductCancelled] = Json.format[ProductCancelled]
-  }
 
 }

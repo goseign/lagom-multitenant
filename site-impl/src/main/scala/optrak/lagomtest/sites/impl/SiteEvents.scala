@@ -27,12 +27,5 @@ object SiteEvents {
   case class SiteCreated(tenantId: TenantId, siteId: SiteId, postcode: String) extends SiteEvent
   case class SitePostcodeUpdated(tenantId: TenantId, siteId: SiteId, newPostcode: String) extends SiteEvent
 
-  object SiteCreated {
-    implicit def format: Format[SiteCreated] = Json.format[SiteCreated]
-  }
-
-  object SitePostcodeUpdated {
-    implicit def format: Format[SitePostcodeUpdated] = Json.format[SitePostcodeUpdated]
-  }
 
 }

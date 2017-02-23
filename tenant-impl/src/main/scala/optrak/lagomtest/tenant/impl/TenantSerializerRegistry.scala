@@ -5,6 +5,8 @@ import optrak.lagomtest.tenant.api
 import optrak.lagomtest.tenant.impl.TenantEvents.{ModelCreated, ModelRemoved, TenantCreated}
 
 import scala.collection.immutable.Seq
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
 
 /**
   * Created by tim on 22/01/17.

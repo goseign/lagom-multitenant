@@ -3,8 +3,6 @@ package optrak.lagomtest.plan
 import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.data.DataJson._
-import play.api.libs.json.{Format, Json}
   /**
   * Created by tim on 29/01/17.
   * Copyright Tim Pigden, Hertford UK
@@ -32,23 +30,5 @@ object PlanCommands {
     case class AddOrder(planId: PlanId, order: Order) extends PlanCommand
     case class RemoveOrder(planId: PlanId, orderId: OrderId) extends PlanCommand
 
-    implicit def formatCreatePlan: Format[CreatePlan] = Json.format[CreatePlan]
-
-
-  implicit def formatUpdateProduct: Format[UpdateProduct] = Json.format[UpdateProduct]
-  implicit def formatAddProduct: Format[AddProduct] = Json.format[AddProduct]
-  implicit def formatRemoveProduct: Format[RemoveProduct] = Json.format[RemoveProduct]
-
-  implicit def formatUpdateSite: Format[UpdateSite] = Json.format[UpdateSite]
-  implicit def formatAddSite: Format[AddSite] = Json.format[AddSite]
-  implicit def formatRemoveSite: Format[RemoveSite] = Json.format[RemoveSite]
-
-    implicit def formatUpdateVehicle: Format[UpdateVehicle] = Json.format[UpdateVehicle]
-    implicit def formatAddVehicle: Format[AddVehicle] = Json.format[AddVehicle]
-    implicit def formatRemoveVehicle: Format[RemoveVehicle] = Json.format[RemoveVehicle]
-
-    implicit def formatUpdateOrder: Format[UpdateOrder] = Json.format[UpdateOrder]
-    implicit def formatAddOrder: Format[AddOrder] = Json.format[AddOrder]
-    implicit def formatRemoveOrder: Format[RemoveOrder] = Json.format[RemoveOrder]
 
 }

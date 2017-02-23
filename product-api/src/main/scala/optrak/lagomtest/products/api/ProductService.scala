@@ -1,20 +1,12 @@
 package optrak.lagomtest.products.api
 
 import akka.{Done, NotUsed}
-import com.lightbend.lagom.scaladsl.api.Service.pathCall
-import com.lightbend.lagom.scaladsl.api.broker.Topic
-import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
-import com.lightbend.lagom.scaladsl.api.deser.MessageSerializer
-import com.lightbend.lagom.scaladsl.api.deser.MessageSerializer.{NegotiatedDeserializer, NegotiatedSerializer}
-import com.lightbend.lagom.scaladsl.api.transport.{MessageProtocol, NotAcceptable, UnsupportedMediaType}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
-import com.lightbend.lagom.scaladsl.playjson.JsonSerializer
 import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.data.DataJson._
-import optrak.lagomtest.products.api.ProductEvents.ProductEvent
+import optrak.lagomtest.utils.PlayJson4s._
+import optrak.scalautils.json.JsonImplicits._
 
-import scala.collection.immutable.Seq
 
 /**
   * Created by tim on 21/01/17.
@@ -92,33 +84,6 @@ case class ProductStatus(productId: ProductId, isCancelled: Boolean)
 case class ProductStatuses(statuses: Set[ProductStatus])
 
 case class ProductIds(ids: Set[ProductId])
-
-object ProductCreationData{
-  // implicit val format: Format[ProductCreationData] = Json.format[ProductCreationData]
-
-  val js: JsonSerializer
-  implicit val creationSerializer = new MessageSerializer[ProductCreationData, _] {
-    override def serializerForRequest: NegotiatedSerializer[ProductCreationData, _$1] = ???
-
-    @scala.throws[UnsupportedMediaType]
-    override def deserializer(protocol: MessageProtocol): NegotiatedDeserializer[ProductCreationData, _$1] = ???
-
-    @scala.throws[NotAcceptable]
-    override def serializerForResponse(acceptedMessageProtocols: Seq[MessageProtocol]): NegotiatedSerializer[ProductCreationData, _$1] = ???
-  }
-}
-
-object ProductStatus {
-  implicit val format: Format[ProductStatus] = Json.format[ProductStatus]
-}
-
-object ProductStatuses {
-  implicit val format: Format[ProductStatuses] = Json.format[ProductStatuses]
-}
-
-object ProductIds {
-  implicit val format: Format[ProductIds] = Json.format[ProductIds]
-}
 
 
 

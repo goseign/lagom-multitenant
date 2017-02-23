@@ -5,9 +5,9 @@ import com.lightbend.lagom.scaladsl.api.Service.pathCall
 import com.lightbend.lagom.scaladsl.api.broker.Topic
 import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
-import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.data.DataJson._
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
 import optrak.lagomtest.sites.api.SiteEvents.SiteEvent
 
 /**
@@ -68,15 +68,5 @@ trait SiteService extends Service {
 case class SiteCreationData(postcode: String)
 
 case class SiteIds(ids: Set[SiteId])
-
-object SiteCreationData{
-  implicit val format: Format[SiteCreationData] = Json.format[SiteCreationData]
-}
-
-
-object SiteIds {
-  implicit val format: Format[SiteIds] = Json.format[SiteIds]
-}
-
 
 

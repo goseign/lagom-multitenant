@@ -84,17 +84,7 @@ sealed trait VehicleDoCommand extends VehicleCommand with ReplyType[Done]
 case class CreateVehicle(tenantId: TenantId, id: String, capacity: Int) extends VehicleDoCommand
 case class UpdateVehicleCapacity(tenantId: TenantId, id: String, newCapacity: Int) extends VehicleDoCommand
 
-case object GetVehicle extends VehicleCommand with ReplyType[Option[Vehicle]] {
-  implicit def format: Format[GetVehicle.type] = JsonFormats.singletonFormat(GetVehicle)
-}
-
-object CreateVehicle {
-  implicit def format: Format[CreateVehicle] = Json.format[CreateVehicle]
-}
-
-object UpdateVehicleCapacity {
-  implicit def format: Format[UpdateVehicleCapacity] = Json.format[UpdateVehicleCapacity]
-}
+case object GetVehicle extends VehicleCommand with ReplyType[Option[Vehicle]]
 
 
 

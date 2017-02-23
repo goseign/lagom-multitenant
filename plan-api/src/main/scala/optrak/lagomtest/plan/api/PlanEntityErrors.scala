@@ -5,7 +5,6 @@ import com.lightbend.lagom.scaladsl.playjson.JsonSerializer
 import optrak.lagomtest.data.Data._
 import optrak.lagomtest.plan.api.PlanService.{CheckedResult, ErrorMessage}
 import play.api.libs.json._
-import optrak.lagomtest.data.DataJson._
 
 /**
   * Created by tim on 30/01/17.
@@ -20,16 +19,8 @@ object PlanEntityErrors {
     def planId = planDescription.id
   }
 
-  object PlanAlreadyExistsError {
-    implicit val format = Json.format[PlanAlreadyExistsError]
-  }
-
   case class ProductAlreadyDefinedError(productId: ProductId, planId: PlanId) extends ErrorMessage {
     override def toString = s"product $productId already defined in plan $planId"
-  }
-
-  object ProductAlreadyDefinedError {
-    implicit val format = Json.format[ProductNotDefinedError]
   }
 
   case class ProductNotDefinedError(productId: ProductId, planId: PlanId) extends ErrorMessage {
@@ -67,22 +58,6 @@ object PlanEntityErrors {
   case class SiteReferencedByOrdersError(siteId: SiteId, orderIds: List[OrderId], planId: PlanId) extends ErrorMessage {
     override def toString = s"site $siteId referenced by orders $orderIds plan $planId"
   }
-
-  // this is clumsy because i'm not familiar with play json best practice
-  implicit def readsChecked[T <: ErrorMessage](implicit emSerializer: JsonSerializer[T] ): Reads[CheckedResult[T]] = new Reads[CheckedResult[T]] {
-    override def reads(json: JsValue): JsResult[CheckedResult[T]] = {
-      val labelX = (__ \ "result").read[String]
-      for {
-        label <- labelX.reads(json)
-        res <- label match {
-          case "done" => JsSuccess(CheckedResult.empty[T])
-          // case "error" => emSerializer.format.reads(json).map(Some(_))
-        }
-      } yield res
-    }
-  }
-
-  implicit def writesChecked[T <: ErrorMessage](implicit emSerializer: JsonSerializer[T]): Writes[CheckedResult[T]] = ???
 
 
 }

@@ -3,8 +3,8 @@ package optrak.lagomtest.vehicles.api
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.data.DataJson._
-import play.api.libs.json.{Format, Json}
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
 
 /**
   * Created by tim on 21/01/17.
@@ -62,15 +62,5 @@ trait VehicleService extends Service {
 case class VehicleCreationData(capacity: Int)
 
 case class VehicleIds(ids: Set[VehicleId])
-
-object VehicleCreationData{
-  implicit val format: Format[VehicleCreationData] = Json.format[VehicleCreationData]
-}
-
-
-object VehicleIds {
-  implicit val format: Format[VehicleIds] = Json.format[VehicleIds]
-}
-
 
 

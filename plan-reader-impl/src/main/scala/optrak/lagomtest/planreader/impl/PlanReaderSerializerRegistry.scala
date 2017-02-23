@@ -3,6 +3,8 @@ package optrak.lagomtest.planreader.impl
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
 
 import scala.collection.immutable.Seq
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
 
 /**
   * Created by tim on 22/01/17.

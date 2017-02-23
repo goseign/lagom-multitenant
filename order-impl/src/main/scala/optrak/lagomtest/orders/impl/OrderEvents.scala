@@ -31,12 +31,5 @@ object OrderEvents {
                           quantity: Int) extends OrderEvent
   case class OrderQuantityUpdated(tenantId: TenantId, orderId: OrderId, newQuantity: Int) extends OrderEvent
 
-  object OrderCreated {
-    implicit def format: Format[OrderCreated] = Json.format[OrderCreated]
-  }
-
-  object OrderQuantityUpdated {
-    implicit def format: Format[OrderQuantityUpdated] = Json.format[OrderQuantityUpdated]
-  }
 
 }

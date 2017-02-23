@@ -16,7 +16,7 @@ val scalaCheckShapeless = "com.github.alexarchambault" %% "scalacheck-shapeless_
 val csvXls = "com.optrak" %% "csv-xls" % latestIntegration
 val optrakJson = "com.optrak" %% "scala-json" % latestIntegration
 val optrakXml = "com.optrak" %% "scala-xml" % latestIntegration
-
+val json4s = "org.json4s" %  "json4s-jackson_2.11" % "3.5.0"
 
 val testDependencies = Seq(libraryDependencies ++= Seq(
     scalaTest,
@@ -41,6 +41,7 @@ val kafkaApiDependencies = Seq(libraryDependencies ++= Seq(
 
 val stdImplDependencies = Seq(
   libraryDependencies ++= Seq(
+    optrakJson,
     lagomScaladslPersistenceCassandra,
     lagomScaladslKafkaBroker,
     clapper,
@@ -50,6 +51,7 @@ val stdImplDependencies = Seq(
 lazy val `plan-api` = (project in file("plan-api"))
   .settings(kafkaApiDependencies :_*)
   .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
 
 lazy val `plan-impl` = (project in file("plan-impl"))
   .enablePlugins(LagomScala)
@@ -67,6 +69,7 @@ lazy val `plan-impl` = (project in file("plan-impl"))
 lazy val `product-api` = (project in file("product-api"))
   .settings(stdApiDependencies :_*)
   .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
 
 lazy val `product-impl` = (project in file("product-impl"))
   .enablePlugins(LagomScala)
@@ -80,6 +83,7 @@ lazy val `product-impl` = (project in file("product-impl"))
 lazy val `site-api` = (project in file("site-api"))
   .settings(stdApiDependencies :_*)
   .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
 
 lazy val `site-impl` = (project in file("site-impl"))
   .enablePlugins(LagomScala)
@@ -93,6 +97,7 @@ lazy val `site-impl` = (project in file("site-impl"))
 lazy val `order-api` = (project in file("order-api"))
   .settings(stdApiDependencies :_*)
   .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
 
 lazy val `order-impl` = (project in file("order-impl"))
   .enablePlugins(LagomScala)
@@ -108,6 +113,7 @@ lazy val `order-impl` = (project in file("order-impl"))
 lazy val `vehicle-api` = (project in file("vehicle-api"))
   .settings(stdApiDependencies :_*)
   .dependsOn(`datamodel`)
+  .dependsOn(`utils`)
 
 lazy val `vehicle-impl` = (project in file("vehicle-impl"))
   .enablePlugins(LagomScala)
@@ -122,6 +128,7 @@ lazy val `plan-reader-api` = (project in file("plan-reader-api"))
   .settings(kafkaApiDependencies :_*)
   .dependsOn(`datamodel`)
   .dependsOn(`plan-api`)
+  .dependsOn(`utils`)
 
 lazy val `plan-reader-impl` = (project in file("plan-reader-impl"))
   .enablePlugins(LagomScala)
@@ -156,9 +163,13 @@ lazy val `datamodel` = (project in file("datamodel"))
 
 lazy val `utils` = (project in file("utils"))
   .enablePlugins(LagomScala)
+  .settings(Seq(libraryDependencies ++= Seq(
+    lagomScaladslApi,
+    optrakJson,
+    clapper
+  )))
   .settings(lagomForkedTestSettings: _*)
   .settings(testDependencies :_*)
-  .settings(stdImplDependencies :_*)
 
 lazy val `integration` = (project in file("integration"))
   .enablePlugins(LagomScala)

@@ -12,8 +12,6 @@ import optrak.lagomtest.products.impl.TenantProductDirectoryEntity.Innards
 import optrak.lagomtest.utils.JsonFormats
 import play.api.libs.json._
 
-import scala.concurrent.Future
-
 /**
   * Created by tim on 18/02/17.
   * Copyright Tim Pigden, Hertford UK
@@ -22,10 +20,6 @@ import scala.concurrent.Future
 object TenantProductDirectoryEntity {
   case class Innards(live: Set[ProductId], cancelled: Set[ProductId]) {
     lazy val all = live ++ cancelled
-  }
-
-  object Innards {
-    implicit def format: Format[Innards] = Json.format[Innards]
   }
 }
 class TenantProductDirectoryEntity extends PersistentEntity with Logging {
@@ -80,31 +74,11 @@ case class WrappedCreateProduct(productId: ProductId) extends ProductDirectoryCo
 
 case class WrappedCancelProduct(productId: ProductId) extends ProductDirectoryCommand with ReplyType[Done]
 
-case object GetAllProducts extends ProductDirectoryCommand with ReplyType[ProductStatuses] {
-  implicit def format: Format[GetAllProducts.type] = JsonFormats.singletonFormat(GetAllProducts)
-}
-
-case object GetLiveProducts extends ProductDirectoryCommand with ReplyType[ProductIds] {
-  implicit def format: Format[GetLiveProducts.type] = JsonFormats.singletonFormat(GetLiveProducts)
-}
-
-object WrappedCreateProduct {
-  implicit def format: Format[WrappedCreateProduct] = Json.format[WrappedCreateProduct]
-}
-object WrappedCancelProduct {
-  implicit def format: Format[WrappedCancelProduct] = Json.format[WrappedCancelProduct]
-}
-
+case object GetAllProducts extends ProductDirectoryCommand with ReplyType[ProductStatuses]
+case object GetLiveProducts extends ProductDirectoryCommand with ReplyType[ProductIds]
 sealed trait ProductDirectoryEvent 
 case class ProductAddedToDirectory(productId: ProductId) extends ProductDirectoryEvent
 case class ProductCancelledInDirectory(productId: ProductId) extends ProductDirectoryEvent
 
-object ProductAddedToDirectory {
-  implicit def format: Format[ProductAddedToDirectory] = Json.format[ProductAddedToDirectory]
-}
-
-object ProductCancelledInDirectory {
-  implicit def format: Format[ProductCancelledInDirectory] = Json.format[ProductCancelledInDirectory]
-}
 
 

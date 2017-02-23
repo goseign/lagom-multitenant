@@ -1,14 +1,10 @@
 package optrak.lagomtest.orders.api
 
 import akka.{Done, NotUsed}
-import com.lightbend.lagom.scaladsl.api.Service.pathCall
-import com.lightbend.lagom.scaladsl.api.broker.Topic
-import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
-import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.data.DataJson._
-import optrak.lagomtest.orders.api.OrderEvents.OrderEvent
+import optrak.scalautils.json.JsonImplicits._
+import optrak.lagomtest.utils.PlayJson4s._
 
 /**
   * Created by tim on 21/01/17.
@@ -49,15 +45,6 @@ trait OrderService extends Service {
 case class OrderCreationData(site: SiteId, product: ProductId, quantity: Int)
 
 case class OrderIds(ids: Set[OrderId])
-
-object OrderCreationData{
-  implicit val format: Format[OrderCreationData] = Json.format[OrderCreationData]
-}
-
-
-object OrderIds {
-  implicit val format: Format[OrderIds] = Json.format[OrderIds]
-}
 
 
 

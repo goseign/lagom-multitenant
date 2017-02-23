@@ -18,20 +18,5 @@ object VehicleEvents {
 
   case class VehicleCreated(tenantId: TenantId, vehicleId: VehicleId) extends VehicleEvent
 
-  object VehicleCreated {
-    implicit def format: Format[VehicleCreated] = Json.format[VehicleCreated]
-  }
-
-  implicit val reads: Reads[VehicleEvent] = {
-    (__ \ "event_type").read[String].flatMap {
-      case "vehicleCreated" => implicitly[Reads[VehicleCreated]].map(identity)
-    }
-  }
-  implicit val writes: Writes[VehicleEvent] = Writes { event =>
-    val (jsValue, eventType) = event match {
-      case m: VehicleCreated => (Json.toJson(m)(VehicleCreated.format), "vehicleCreated")
-    }
-    jsValue.transform(__.json.update((__ \ 'event_type).json.put(JsString(eventType)))).get
-  }
 }
 
