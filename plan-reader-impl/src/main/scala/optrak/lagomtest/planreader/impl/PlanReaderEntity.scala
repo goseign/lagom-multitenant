@@ -7,7 +7,6 @@ import optrak.lagomtest.data.Data._
 import optrak.lagomtest.plan.api.{PlanEvents, PlanImpl}
 import optrak.lagomtest.plan.api.PlanEvents._
 import optrak.lagomtest.plan.api.PlanService.SimplePlan
-import optrak.lagomtest.utils.JsonFormats
 import play.api.libs.json.{Format, Reads, Writes}
 
 /**

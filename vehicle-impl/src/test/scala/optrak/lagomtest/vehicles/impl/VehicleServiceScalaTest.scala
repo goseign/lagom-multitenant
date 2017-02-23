@@ -44,6 +44,18 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       }
     }
 
+    "create and retrieve vehicle with xml" in {
+
+
+      for {
+        answer <- client.createVehicleXml(tenantId, vehicle1Id).invoke(createVehicleData(vehicle1))
+        retrieved <- client.getVehicle(tenantId, vehicle1Id).invoke()
+      } yield {
+        answer should ===(Done)
+      }
+    }
+
+
 
     "complain about 2nd attempt create vehicle" in {
       val exp = recoverToExceptionIf[TransportException](
@@ -60,6 +72,8 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     }
 
   }
+
+  /*
   "reading" should {
     def createP(implicit arb: Arbitrary[VehicleCreationData]): Option[VehicleCreationData] =
       arb.arbitrary.sample
@@ -99,5 +113,5 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     }
 
   }
-
+*/
 }

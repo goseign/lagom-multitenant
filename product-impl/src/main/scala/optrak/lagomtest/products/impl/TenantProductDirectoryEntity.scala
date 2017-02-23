@@ -9,7 +9,6 @@ import optrak.lagomtest.products.impl.ProductEvents.ProductEvent
 import optrak.lagomtest.products.api.ProductEvents.{ProductCancelled => ApiProductCancelled, ProductCreated => ApiProductCreated, ProductEvent => ApiProductEvent}
 import optrak.lagomtest.products.api.{ProductIds, ProductStatus, ProductStatuses}
 import optrak.lagomtest.products.impl.TenantProductDirectoryEntity.Innards
-import optrak.lagomtest.utils.JsonFormats
 import play.api.libs.json._
 
 /**

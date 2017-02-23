@@ -166,6 +166,7 @@ lazy val `utils` = (project in file("utils"))
   .settings(Seq(libraryDependencies ++= Seq(
     lagomScaladslApi,
     optrakJson,
+    optrakXml,
     clapper
   )))
   .settings(lagomForkedTestSettings: _*)

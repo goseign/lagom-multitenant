@@ -7,7 +7,6 @@ import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import optrak.lagomtest.data.Data._
 import TenantEvents.{TenantCreated, TenantEvent, ModelCreated, ModelRemoved}
 import play.api.libs.json.{Format, Json}
-import optrak.lagomtest.utils.JsonFormats
 import optrak.lagomtest.tenant.api.{ModelCreated => ApiModelCreated}
 import optrak.lagomtest.tenant.api
 /**

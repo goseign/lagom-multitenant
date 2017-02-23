@@ -6,7 +6,6 @@ import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import grizzled.slf4j.Logging
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.utils.JsonFormats
 import optrak.lagomtest.vehicles.impl.VehicleEvents._
 import play.api.libs.json.{Format, Json}
 /**
