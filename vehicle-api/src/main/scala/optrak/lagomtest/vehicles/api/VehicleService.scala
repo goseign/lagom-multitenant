@@ -3,6 +3,7 @@ package optrak.lagomtest.vehicles.api
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.Service.pathCall
 import com.lightbend.lagom.scaladsl.api.deser
+import com.lightbend.lagom.scaladsl.api.deser.StrictMessageSerializer
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.data.Data._
 import optrak.scalautils.json.JsonImplicits._
@@ -20,35 +21,30 @@ import optrak.scalautils.xml.{XmlParser, XmlWriter}
   */
 trait VehicleService extends Service {
 
-  def createVehicle(tenant: TenantId, id: VehicleId): ServiceCall[VehicleCreationData, Done]
-
   def updateCapacity(tenant: TenantId, id: VehicleId, newCapacity: Int): ServiceCall[NotUsed, Done]
 
   def getVehicle(tenant: TenantId, id: VehicleId): ServiceCall[NotUsed, Vehicle]
 
   def getVehiclesForTenant(tenant: TenantId): ServiceCall[NotUsed, VehicleIds]
 
-  def createVehicleXml(tenant: TenantId, id: VehicleId): ServiceCall[VehicleCreationData, Done]
-
-  def xmlCall = {
+  implicit val xmlSerializer: StrictMessageSerializer[VehicleCreationData] = {
     import optrak.scalautils.xml.XmlImplicits._
     val vcdParser = XmlParser[VehicleCreationData]
     val vcdWriter = XmlWriter[VehicleCreationData]
 
     val xmlS = XmlSerializer.XmlMessageSerializer
-    val xmlSerializer = XmlSerializer.xmlFormatMessageSerializer[VehicleCreationData](xmlS, vcdParser, vcdWriter)
 
-    pathCall("/optrak.lagom.vehicles.api/:tenant/create/:id", createVehicleXml _)(xmlSerializer, deser.MessageSerializer.DoneMessageSerializer)
-
+    XmlSerializer.xmlFormatMessageSerializer[VehicleCreationData](xmlS, vcdParser, vcdWriter)
   }
+
+  def createVehicleXml(tenant: TenantId, id: VehicleId): ServiceCall[VehicleCreationData, Done]
 
   override final def descriptor = {
     import Service._
 
     named("vehicle").withCalls(
       pathCall("/optrak.lagom.vehicles.api/:tenant/capacity/:id/:newCapacity", updateCapacity _),
-      pathCall("/optrak.lagom.vehicles.api/:tenant/create/:id", createVehicle _),
-      xmlCall,
+      pathCall("/optrak.lagom.vehicles.api/:tenant/create/:id", createVehicleXml _),
       pathCall("/optrak.lagom.vehicles.api/:tenant/vehicle/:id", getVehicle _ ),
       pathCall("/optrak.lagom.vehicles.api/:tenant/vehicles", getVehiclesForTenant _ )
     )

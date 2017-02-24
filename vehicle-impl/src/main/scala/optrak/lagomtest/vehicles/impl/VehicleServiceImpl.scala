@@ -29,14 +29,6 @@ class VehicleServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
       persistentEntityRegistry.refFor[VehicleEntity](entityId(tenantId, id))
 
 
-  override def createVehicle(tenantId: TenantId, id: VehicleId): ServiceCall[VehicleCreationData, Done] = ServiceCall { request =>
-    logger.debug(s"creating vehicle $id")
-    ref(tenantId, id).ask(CreateVehicle(tenantId, id, request.capacity)).map { res =>
-      logger.debug(s"created vehicle $id")
-      res
-    }
-  }
-
   override def createVehicleXml(tenantId: TenantId, id: VehicleId): ServiceCall[VehicleCreationData, Done] = ServiceCall { request =>
     logger.debug(s"creating vehicle $id")
     ref(tenantId, id).ask(CreateVehicle(tenantId, id, request.capacity)).map { res =>

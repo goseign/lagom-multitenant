@@ -5,6 +5,7 @@ import cats.data.Validated.{Invalid, Valid}
 import com.lightbend.lagom.scaladsl.api.deser.MessageSerializer.{NegotiatedDeserializer, NegotiatedSerializer}
 import com.lightbend.lagom.scaladsl.api.deser.{MessageSerializer, StrictMessageSerializer}
 import com.lightbend.lagom.scaladsl.api.transport.{DeserializationException, _}
+import grizzled.slf4j.Logging
 import optrak.scalautils.validating.ErrorReports.HeadContext
 import optrak.scalautils.xml.{XmlParser, XmlWriter}
 
@@ -17,7 +18,7 @@ import scala.xml.{Node, XML}
   * Created by tim on 23/02/17.
   * Copyright Tim Pigden, Hertford UK
   */
-object XmlSerializer {
+object XmlSerializer extends Logging {
 
   implicit val validationContext = HeadContext("Xml Serializer")
 
@@ -59,7 +60,7 @@ object XmlSerializer {
       override def protocol: MessageProtocol = xmlSerializer.protocol
 
       override def serialize(message: Message): ByteString = {
-        val node = xmlWriter.write(None, message)
+        val node = xmlWriter.write(Some("Message"), message)
         xmlSerializer.serialize(node.head)
       }
     }
@@ -67,6 +68,7 @@ object XmlSerializer {
     private class NodeFormatDeserializer(NodeDeserializer: NegotiatedDeserializer[Node, ByteString]) extends NegotiatedDeserializer[Message, ByteString] {
       override def deserialize(wire: ByteString): Message = {
         val node = NodeDeserializer.deserialize(wire)
+        logger.debug(s"node is $node")
         xmlParser.parse(node) match {
           case Valid(message) => message
           case Invalid(msgs) => throw DeserializationException(msgs.toList.mkString("\n"))

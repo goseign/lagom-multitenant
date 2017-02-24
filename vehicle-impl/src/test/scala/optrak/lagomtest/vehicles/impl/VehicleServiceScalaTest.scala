@@ -35,17 +35,7 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
 
   "vehicle service" should {
 
-    "create and retrieve vehicle" in {
-      for {
-        answer <- client.createVehicle(tenantId, vehicle1Id).invoke(createVehicleData(vehicle1))
-        retrieved <- client.getVehicle(tenantId, vehicle1Id).invoke()
-      } yield {
-        answer should ===(Done)
-      }
-    }
-
     "create and retrieve vehicle with xml" in {
-
 
       for {
         answer <- client.createVehicleXml(tenantId, vehicle1Id).invoke(createVehicleData(vehicle1))
@@ -55,13 +45,11 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       }
     }
 
-
-
     "complain about 2nd attempt create vehicle" in {
       val exp = recoverToExceptionIf[TransportException](
       for {
-        answer <- client.createVehicle(tenantId, vehicle1Id).invoke(createVehicleData(vehicle1))
-        answer2 <- client.createVehicle(tenantId, vehicle1Id).invoke(createVehicleData(vehicle1))
+        answer <- client.createVehicleXml(tenantId, vehicle1Id).invoke(createVehicleData(vehicle1))
+        answer2 <- client.createVehicleXml(tenantId, vehicle1Id).invoke(createVehicleData(vehicle1))
       } yield {
         answer2 should ===(Done)
       })
@@ -71,9 +59,10 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       }
     }
 
+
   }
 
-  /*
+
   "reading" should {
     def createP(implicit arb: Arbitrary[VehicleCreationData]): Option[VehicleCreationData] =
       arb.arbitrary.sample
@@ -87,7 +76,7 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       val vehicles: List[(VehicleId, VehicleCreationData)] = cps.zipWithIndex.map(t => (t._2.toString, t._1))
       val vehiclesCreated = vehicles.map {t =>
         Thread.sleep(1500)
-        client.createVehicle(tenantId, t._1).invoke(t._2)
+        client.createVehicleXml(tenantId, t._1).invoke(t._2)
       }
 
       for {
@@ -113,5 +102,5 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     }
 
   }
-*/
+
 }
