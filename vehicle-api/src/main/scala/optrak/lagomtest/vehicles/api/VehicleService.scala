@@ -6,6 +6,7 @@ import com.lightbend.lagom.scaladsl.api.deser
 import com.lightbend.lagom.scaladsl.api.deser.StrictMessageSerializer
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.data.Data._
+import optrak.lagomtest.utils.CheckedDoneSerializer.CheckedDone
 import optrak.scalautils.json.JsonImplicits._
 import optrak.lagomtest.utils.PlayJson4s._
 import optrak.scalautils.validating.ErrorReports.{ValidatedER, ValidationContext}
@@ -27,7 +28,11 @@ trait VehicleService extends Service {
 
   def getVehiclesForTenant(tenant: TenantId): ServiceCall[NotUsed, VehicleIds]
 
-  implicit val xmlSerializer: StrictMessageSerializer[VehicleCreationData] = {
+  implicit val vehiclesSerializer: StrictMessageSerializer[Vehicles] = ???
+
+  def createVehiclesFromCsv(tenantId: TenantId): ServiceCall[Vehicles, CheckedDone]
+
+  implicit val xmlVehicleCreationSerializer: StrictMessageSerializer[VehicleCreationData] = {
     import optrak.scalautils.xml.XmlImplicits._
     val vcdParser = XmlParser[VehicleCreationData]
     val vcdWriter = XmlWriter[VehicleCreationData]
@@ -36,6 +41,7 @@ trait VehicleService extends Service {
 
     XmlSerializer.xmlFormatMessageSerializer[VehicleCreationData](xmlS, vcdParser, vcdWriter)
   }
+
 
   def createVehicleXml(tenant: TenantId, id: VehicleId): ServiceCall[VehicleCreationData, Done]
 
@@ -65,5 +71,7 @@ trait VehicleService extends Service {
 case class VehicleCreationData(capacity: Int)
 
 case class VehicleIds(ids: Set[VehicleId])
+
+case class Vehicles(vehicles: List[Vehicle])
 
 

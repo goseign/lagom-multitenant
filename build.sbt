@@ -167,6 +167,7 @@ lazy val `utils` = (project in file("utils"))
     lagomScaladslApi,
     optrakJson,
     optrakXml,
+    csvXls,
     clapper
   )))
   .settings(lagomForkedTestSettings: _*)
