@@ -43,6 +43,7 @@ object CsvSerializer {
     private class CsvDeserializer(charset: String) extends NegotiatedDeserializer[Csv, ByteString] {
       override def deserialize(wire: ByteString): Csv = {
         val s = wire.decodeString(charset)
+        ???
       }
     }
 
@@ -57,7 +58,7 @@ object CsvSerializer {
 
   }
 
-  implicit def xmlFormatMessageSerializer[Message](implicit NodeMessageSerializer: MessageSerializer[Csv, ByteString],
+/*  implicit def xmlFormatMessageSerializer[Message](implicit NodeMessageSerializer: MessageSerializer[Csv, ByteString],
                                                    csvParser: CellParser[Message, String, CsvRow],
                                                    csvWriter: CsvRowWriter[Message],
                                                    headerBuilder: HeaderBuilder[Message])
@@ -92,6 +93,6 @@ object CsvSerializer {
 
     override def serializerForRequest: NegotiatedSerializer[Message, ByteString] =
       new CsvFormatSerializer(NodeMessageSerializer.serializerForRequest)
-  }
+  }*/
 
 }
