@@ -32,6 +32,12 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
   
   def createVehicleData(vehicle: Vehicle) = VehicleCreationData(vehicle.capacity)
 
+  def createP(implicit arb: Arbitrary[VehicleCreationData]): Option[VehicleCreationData] =
+    arb.arbitrary.sample
+
+  def createV(implicit arb: Arbitrary[Vehicle]): Option[Vehicle] =
+    arb.arbitrary.sample
+
 
   "vehicle service" should {
 
@@ -59,13 +65,35 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       }
     }
 
+    "create as csv upload" in {
+      val vehicles : List[Vehicle] = 0.to(10).flatMap( i => createV ).toList
+      for {
+        answer <- client.createVehiclesFromCsv(tenantId).invoke(vehicles)
+        dbAllVehicles <- {
+          Thread.sleep(4000)
+          client.getVehiclesForTenant(tenantId).invoke()
+        }
+      } yield {
+        val ap = dbAllVehicles
+        println(s"all vehicles is $dbAllVehicles")
+
+        vehicles.foreach { p =>
+          val found = ap.ids.find(_ == p.id)
+          found should === (Some(p.id))
+        }
+
+        true should ===(true)
+
+      }
+
+
+    }
+
 
   }
 
 
-  "reading" should {
-    def createP(implicit arb: Arbitrary[VehicleCreationData]): Option[VehicleCreationData] =
-      arb.arbitrary.sample
+ /* "reading" should {
 
     "create multiple vehicles for single tenant" in {
 
@@ -100,7 +128,8 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
 
       }
     }
+    }
+*/
 
-  }
 
 }
