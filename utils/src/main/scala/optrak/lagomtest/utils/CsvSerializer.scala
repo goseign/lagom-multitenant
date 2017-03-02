@@ -14,7 +14,7 @@ import optrak.scalautils.data.common.Parsing.CellParser
 import optrak.scalautils.data.common.Writing.RowWriter
 import optrak.scalautils.data.csv.CsvWriting.CsvDataWriter
 import optrak.scalautils.data.csv.{CsvCellParser, CsvRow, CsvRowWriter, CsvTableReader}
-import optrak.scalautils.validating.ErrorReports.HeadContext
+import optrak.scalautils.validating.ErrorReports.{EitherER, HeadContext}
 
 import scala.collection.immutable
 import scala.util.control.NonFatal
@@ -48,7 +48,7 @@ object CsvSerializer extends Logging {
     private class CsvDeserializer(charset: String) extends NegotiatedDeserializer[Csv, ByteString] {
       override def deserialize(wire: ByteString): Csv = {
         val s = wire.decodeString(charset)
-        ???
+        Csv(s)
       }
     }
 
@@ -69,42 +69,43 @@ object CsvSerializer extends Logging {
                                                    headerBuilder: HeaderBuilder[Message],
                                                    inputHeaders: InputHeaders,
                                                    outputHeaders: OutputHeaders)
-  : StrictMessageSerializer[List[Message]] = new StrictMessageSerializer[List[Message]] {
+  : StrictMessageSerializer[EitherER[List[Message]]] = new StrictMessageSerializer[EitherER[List[Message]]] {
+
     private class CsvFormatSerializer(csvSerializer: NegotiatedSerializer[Csv, ByteString])
-      extends NegotiatedSerializer[List[Message], ByteString] {
+      extends NegotiatedSerializer[EitherER[List[Message]], ByteString] {
       override def protocol: MessageProtocol = csvSerializer.protocol
 
-      override def serialize(message: List[Message]): ByteString = {
-        val stringWriter = new StringWriter
-        CsvDataWriter.write(message, stringWriter, outputHeaders)
-        val csv = Csv(stringWriter.toString)
-        csvSerializer.serialize(csv)
+      override def serialize(message: EitherER[List[Message]]): ByteString = {
+        message match {
+          case Left(msg) => CheckedDoneSerializer.toByteString(Left(msg))
+          case Right(data) =>
+            val stringWriter = new StringWriter
+            CsvDataWriter.write(data, stringWriter, outputHeaders)
+            stringWriter.toString
+            csvSerializer.serialize(Csv(stringWriter.toString))
+        }
       }
     }
 
     private class CsvFormatDeserializer(CsvDeserializer: NegotiatedDeserializer[Csv, ByteString])
-      extends NegotiatedDeserializer[List[Message], ByteString] {
-      override def deserialize(wire: ByteString): List[Message] = {
+      extends NegotiatedDeserializer[EitherER[List[Message]], ByteString] {
+      override def deserialize(wire: ByteString): EitherER[List[Message]] = {
         val csv = CsvDeserializer.deserialize(wire)
         val reader = new StringReader(csv.data)
-        val didRead = CsvTableReader.parseTable(reader, inputHeaders)
-        didRead match {
-          case Right(message) => message
-          case Left(msgs) => throw DeserializationException(msgs.toList.mkString("\n"))
-        }
+        CsvTableReader.parseTable(reader, inputHeaders)
       }
     }
 
     override def acceptResponseProtocols: immutable.Seq[MessageProtocol] = csvMessageSerializer.acceptResponseProtocols
 
-    override def deserializer(protocol: MessageProtocol): NegotiatedDeserializer[List[Message], ByteString] =
+    override def deserializer(protocol: MessageProtocol): NegotiatedDeserializer[EitherER[List[Message]], ByteString] =
       new CsvFormatDeserializer(csvMessageSerializer.deserializer(protocol))
 
     override def serializerForResponse(acceptedMessageProtocols: immutable.Seq[MessageProtocol] = immutable.Seq(defaultCsvProtocol))
-    : NegotiatedSerializer[List[Message], ByteString] =
+    : NegotiatedSerializer[EitherER[List[Message]], ByteString] =
       new CsvFormatSerializer(csvMessageSerializer.serializerForResponse(acceptedMessageProtocols))
 
-    override def serializerForRequest: NegotiatedSerializer[List[Message], ByteString] =
+    override def serializerForRequest: NegotiatedSerializer[EitherER[List[Message]], ByteString] =
       new CsvFormatSerializer(csvMessageSerializer.serializerForRequest)
   }
 

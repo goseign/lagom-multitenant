@@ -9,8 +9,9 @@ import optrak.lagomtest.data.Data.{TenantId, Vehicle, VehicleId}
 import optrak.lagomtest.utils.CheckedDoneSerializer.CheckedDone
 import optrak.lagomtest.vehicles.api.VehicleEvents.{VehicleCreated => ApiVehicleCreated, VehicleEvent => ApiVehicleEvent}
 import optrak.lagomtest.vehicles.api._
+import optrak.scalautils.validating.ErrorReports.EitherER
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Created by tim on 26/01/17.
@@ -53,7 +54,21 @@ class VehicleServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
     vehicleRepository.selectVehiclesForTenant(tenantId)
   }
 
-  override def createVehiclesFromCsv(tenantId: TenantId): ServiceCall[Vehicles, CheckedDone] = ???
+  override def createVehiclesFromERList(tenantId: TenantId): ServiceCall[EitherER[Vehicles], CheckedDone] = ServiceCall { request =>
+    logger.debug(s"creating vehicles")
+    request match {
+      case Left(errs) => Future.successful(Left(errs))
+      case Right(vehicles) =>
+        val allWritten = vehicles.map { v =>
+          ref(tenantId, v.id).ask(CreateVehicle(tenantId, v.id, v.capacity)).map { res =>
+            logger.debug(s"created vehicle ${v.id}")
+            res
+          }
+        }
+        Future.sequence(allWritten).map { _ => Right(Done) }
+    }
+
+  }
 }
 
 

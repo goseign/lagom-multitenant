@@ -5,12 +5,15 @@ package optrak.lagomtest.vehicles.impl
   * Copyright Tim Pigden, Hertford UK
   */
 import akka.Done
+import com.lightbend.lagom.scaladsl.api.deser.StrictMessageSerializer
 import com.lightbend.lagom.scaladsl.api.transport.TransportException
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.data.Data.{Vehicle, VehicleId}
+import optrak.lagomtest.vehicles.api.VehicleService.Vehicles
 import optrak.lagomtest.vehicles.api.{VehicleCreationData, VehicleService}
 import optrak.lagomtest.vehicles.impl.VehicleTestCommon._
+import optrak.scalautils.validating.ErrorReports.EitherER
 import org.scalacheck._
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import org.scalacheck.Shapeless._
@@ -36,10 +39,15 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     arb.arbitrary.sample
 
   def createV(implicit arb: Arbitrary[Vehicle]): Option[Vehicle] =
-    arb.arbitrary.sample
+    for {
+      s <- arb.arbitrary.sample
+      if s.id != ""
+    } yield s
+
 
 
   "vehicle service" should {
+
 
     "create and retrieve vehicle with xml" in {
 
@@ -50,6 +58,7 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
         answer should ===(Done)
       }
     }
+
 
     "complain about 2nd attempt create vehicle" in {
       val exp = recoverToExceptionIf[TransportException](
@@ -65,15 +74,17 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       }
     }
 
-    "create as csv upload" in {
+
+    def doIt(implicit serializer: StrictMessageSerializer[EitherER[Vehicles]]) = {
       val vehicles : List[Vehicle] = 0.to(10).flatMap( i => createV ).toList
       for {
-        answer <- client.createVehiclesFromCsv(tenantId).invoke(vehicles)
+        answer <- client.createVehiclesFromERList(tenantId).invoke(Right(vehicles))
         dbAllVehicles <- {
           Thread.sleep(4000)
           client.getVehiclesForTenant(tenantId).invoke()
         }
       } yield {
+        println(s"answer is $answer")
         val ap = dbAllVehicles
         println(s"all vehicles is $dbAllVehicles")
 
@@ -81,7 +92,6 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
           val found = ap.ids.find(_ == p.id)
           found should === (Some(p.id))
         }
-
         true should ===(true)
 
       }
@@ -90,10 +100,19 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     }
 
 
+    "create as csv upload" in {
+      doIt(client.vehiclesCsvSerializer)
+    }
+
+    "create as xls upload" in {
+      doIt(client.vehiclesXlsSerializer)
+    }
+
+
   }
 
 
- /* "reading" should {
+  "reading" should {
 
     "create multiple vehicles for single tenant" in {
 
@@ -129,7 +148,7 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       }
     }
     }
-*/
+
 
 
 }

@@ -2,6 +2,7 @@ package optrak.lagomtest.utils
 
 import java.util.UUID
 
+import akka.Done
 import cats.data.Validated.{Invalid, Valid}
 import optrak.scalautils.json.{JsonParser, JsonWriter, SimpleJsonWriters}
 import optrak.scalautils.validating.ErrorReports.{HeadContext, ValidatedER, ValidationContext}
@@ -58,6 +59,9 @@ object PlayJson4s {
     case j4s.JArray(fields) => pjson.JsArray(fields.map(toPlayJson(_)))
     case j4s.JObject(fields) => pjson.JsObject(fields.map { case (k, v) => k -> toPlayJson(v) }.toMap)
   }
+
+//  implicit val DoneWriter: JsonWriter[Done] =
+//  implicit val DoneParser: JsonParser[Done] = ???
 
   implicit def opkJsonFormat[T](implicit parser: JsonParser[T], writer: JsonWriter[T]): Format[T] = new Format[T] {
     override def writes(o: T): JsValue = {
