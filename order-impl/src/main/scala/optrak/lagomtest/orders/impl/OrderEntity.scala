@@ -8,7 +8,7 @@ import grizzled.slf4j.Logging
 import optrak.lagomtest.data.Data._
 import optrak.lagomtest.orders.impl.OrderEvents._
 import optrak.scalautils.json.JsonImplicits._
-import optrak.lagomtest.utils.PlayJson4s._
+
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK

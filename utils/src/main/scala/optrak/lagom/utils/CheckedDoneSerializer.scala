@@ -1,4 +1,4 @@
-package optrak.lagomtest.utils
+package optrak.lagom.utils
 
 import akka.Done
 import akka.util.ByteString

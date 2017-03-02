@@ -5,9 +5,10 @@ import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.api.transport.NotFound
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
 import grizzled.slf4j.Logging
+import optrak.lagom.utils.CheckedDoneSerializer.CheckedDone
 import optrak.lagomtest.data.Data.{TenantId, Vehicle, VehicleId}
-import optrak.lagomtest.utils.CheckedDoneSerializer.CheckedDone
 import optrak.lagomtest.vehicles.api.VehicleEvents.{VehicleCreated => ApiVehicleCreated, VehicleEvent => ApiVehicleEvent}
+import optrak.lagomtest.vehicles.api.VehicleService.Vehicles
 import optrak.lagomtest.vehicles.api._
 import optrak.scalautils.validating.ErrorReports.EitherER
 

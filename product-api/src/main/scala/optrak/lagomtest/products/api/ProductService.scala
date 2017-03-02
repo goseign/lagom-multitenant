@@ -4,9 +4,8 @@ import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import play.api.libs.json.{Format, Json}
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.utils.PlayJson4s._
 import optrak.scalautils.json.JsonImplicits._
-
+import optrak.lagom.utils.PlayJson4s._
 
 /**
   * Created by tim on 21/01/17.

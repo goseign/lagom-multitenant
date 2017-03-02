@@ -8,10 +8,10 @@ import com.lightbend.lagom.scaladsl.server.LagomApplication
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.data.Data.ProductId
 import optrak.lagomtest.products.impl.ProductEvents.{ProductCancelled, ProductCreated, ProductEvent}
-import optrak.lagomtest.utils.ReadSideTestDriver
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.ws.ahc.AhcWSComponents
 import ProductTestCommon._
+import optrak.lagom.utils.ReadSideTestDriver
 import optrak.lagomtest.products.api.ProductStatus
 
 import scala.concurrent.Future

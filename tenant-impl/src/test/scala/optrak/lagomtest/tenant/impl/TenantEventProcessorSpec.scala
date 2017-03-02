@@ -7,8 +7,8 @@ import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.server.LagomApplication
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import TenantEvents.{TenantCreated, TenantEvent}
+import optrak.lagom.utils.ReadSideTestDriver
 import optrak.lagomtest.data.Data.TenantId
-import optrak.lagomtest.utils.ReadSideTestDriver
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.ws.ahc.AhcWSComponents
 

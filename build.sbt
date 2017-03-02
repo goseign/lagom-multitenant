@@ -173,15 +173,5 @@ lazy val `utils` = (project in file("utils"))
   .settings(lagomForkedTestSettings: _*)
   .settings(testDependencies :_*)
 
-lazy val `integration` = (project in file("integration"))
-  .enablePlugins(LagomScala)
-  .settings(
-    libraryDependencies ++= Seq(
-      macwire
-    )
 
-  )
-  .settings(lagomForkedTestSettings: _*)
-  .dependsOn(`plan-impl` % "test")
-  .dependsOn(`plan-reader-impl` % "test")
 

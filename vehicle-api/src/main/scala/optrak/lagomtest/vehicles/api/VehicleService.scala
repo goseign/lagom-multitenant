@@ -8,22 +8,23 @@ import com.lightbend.lagom.scaladsl.api.deser.{MessageSerializer, StrictMessageS
 import com.lightbend.lagom.scaladsl.api.transport.MessageProtocol
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.data.Data._
-import optrak.lagomtest.utils.CheckedDoneSerializer.CheckedDone
+import optrak.lagom.utils.CheckedDoneSerializer.CheckedDone
 import optrak.scalautils.json.JsonImplicits._
-import optrak.lagomtest.utils.PlayJson4s._
+import optrak.lagom.utils.PlayJson4s._
 import optrak.scalautils.validating.ErrorReports.{EitherER, ValidatedER, ValidationContext}
 
 import scala.xml.NodeSeq
-import optrak.lagomtest.utils.{CheckedDoneSerializer, CsvSerializer, XlsSerializer, XmlSerializer}
+import optrak.lagom.utils.{CheckedDoneSerializer, XlsSerializer, XmlSerializer}
 import optrak.scalautils.data.common.HeaderBuilder
 import optrak.scalautils.data.common.Headers.{BuiltInInputHeaders, BuiltInOutputHeaders}
 import optrak.scalautils.data.common.Writing.CellWriter
 import optrak.scalautils.data.csv.{CsvCellParser, CsvCellWriter, CsvRow, CsvRowWriter}
 import optrak.scalautils.xml.{XmlParser, XmlWriter}
-import optrak.lagomtest.utils.CheckedDoneSerializer._
+import optrak.lagom.utils.CheckedDoneSerializer._
 
 import scala.collection.immutable
 import MessageSerializer._
+import optrak.lagom.utils.{CsvSerializer, XlsSerializer, XmlSerializer}
 import optrak.scalautils.data.poi.{PoiCellParser, PoiCellWriter, PoiRowWriter}
 /**
   * Created by tim on 21/01/17.

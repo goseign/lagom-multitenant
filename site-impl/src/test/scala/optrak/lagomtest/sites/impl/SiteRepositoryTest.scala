@@ -8,10 +8,10 @@ import com.lightbend.lagom.scaladsl.server.LagomApplication
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.data.Data.SiteId
 import optrak.lagomtest.sites.impl.SiteEvents.{SiteCreated, SiteEvent}
-import optrak.lagomtest.utils.ReadSideTestDriver
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.ws.ahc.AhcWSComponents
 import SiteTestCommon._
+import optrak.lagom.utils.ReadSideTestDriver
 import optrak.lagomtest.sites.api.SiteIds
 
 import scala.concurrent.Future
