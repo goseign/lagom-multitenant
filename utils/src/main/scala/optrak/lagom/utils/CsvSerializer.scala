@@ -10,10 +10,8 @@ import com.lightbend.lagom.scaladsl.api.transport.{DeserializationException, Mes
 import grizzled.slf4j.Logging
 import optrak.scalautils.data.common.HeaderBuilder
 import optrak.scalautils.data.common.Headers.{InputHeaders, OutputHeaders}
-import optrak.scalautils.data.common.Parsing.CellParser
-import optrak.scalautils.data.common.Writing.RowWriter
 import optrak.scalautils.data.csv.CsvWriting.CsvDataWriter
-import optrak.scalautils.data.csv.{CsvCellParser, CsvRow, CsvRowWriter, CsvTableReader}
+import optrak.scalautils.data.csv.{CsvCellParser, CsvRowWriter, CsvTableReader}
 import optrak.scalautils.validating.ErrorReports.{EitherER, HeadContext}
 
 import scala.collection.immutable

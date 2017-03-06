@@ -10,9 +10,8 @@ import grizzled.slf4j.Logging
 import optrak.scalautils.data.common.HeaderBuilder
 import optrak.scalautils.data.common.Headers.{InputHeaders, OutputHeaders}
 import optrak.scalautils.data.poi._
-import optrak.scalautils.validating.ErrorReports.{EitherER, HeadContext}
-import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.{Workbook, WorkbookFactory}
+import optrak.scalautils.validating.ErrorReports.{EitherER, HeadContext}
 
 import scala.collection.immutable
 import scala.util.control.NonFatal
