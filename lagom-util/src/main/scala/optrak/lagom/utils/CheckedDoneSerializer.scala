@@ -1,4 +1,4 @@
-package optrak.lagomtest.utils
+package optrak.lagom.utils
 
 import akka.Done
 import akka.util.ByteString
@@ -66,6 +66,13 @@ object CheckedDoneSerializer extends LowPriorityMessageSerializerImplicits {
         }
       }
     }
+  }
+
+  /**
+    * util function called by other serializers if they hit problems
+    */
+  def toByteString(checkedDone: CheckedDone): ByteString = {
+    CheckedDoneMessageSerializer.serializerForResponse(acceptJS).serialize(checkedDone)
   }
 
 }

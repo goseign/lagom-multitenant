@@ -4,7 +4,7 @@ import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegi
 import optrak.lagomtest.data.Data.{Site, SiteId}
 import optrak.lagomtest.sites.impl.SiteEvents._
 import optrak.scalautils.json.JsonImplicits._
-import optrak.lagomtest.utils.PlayJson4s._
+import optrak.lagom.utils .PlayJson4s._
 import optrak.lagomtest.sites.api.SiteIds
 
 import scala.collection.immutable.Seq

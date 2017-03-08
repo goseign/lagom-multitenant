@@ -14,6 +14,7 @@ import optrak.lagomtest.vehicles.impl.VehicleTestCommon._
 import org.scalacheck._
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import org.scalacheck.Shapeless._
+import optrak.scalautils.validating.ErrorReports.ErrorReport._
 
 import scala.concurrent.Future
 
@@ -100,6 +101,41 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
 
       }
     }
+
+    "create multiple vehicles with csv" in {
+
+      val tenantId = "newTenant"
+
+      implicitly[Arbitrary[VehicleCreationData]]
+
+      // we're going to generate some arbitrary vehicles then check that they actually got created
+      val cps : List[VehicleCreationData] = 0.to(10).flatMap( i => createP ).toList
+      val vehicles: List[(Vehicle)] = cps.zipWithIndex.map(t => Vehicle(t._2.toString, t._1.capacity))
+
+      for {
+        seq <- client.createVehiclesFromCsv(tenantId).invoke(Right(vehicles))
+
+        dbAllVehicles <- {
+          Thread.sleep(4000)
+          client.getVehiclesForTenant(tenantId).invoke()
+        }
+
+
+      } yield {
+        val ap = dbAllVehicles
+        println(s"all vehicles is $dbAllVehicles")
+
+        vehicles.foreach { p =>
+          val found = ap.ids.find(_ == p.id)
+          found should === (Some(p.id))
+        }
+
+        true should ===(true)
+
+      }
+    }
+
+
 
   }
 

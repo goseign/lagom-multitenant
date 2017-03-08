@@ -4,7 +4,7 @@ import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegi
 
 import scala.collection.immutable.Seq
 import optrak.scalautils.json.JsonImplicits._
-import optrak.lagomtest.utils.PlayJson4s._
+import optrak.lagom.utils .PlayJson4s._
 
 /**
   * Created by tim on 22/01/17.

@@ -6,7 +6,7 @@ import optrak.lagomtest.data.Data._
 import optrak.lagomtest.plan.api.PlanEntityErrors._
 import optrak.lagomtest.plan.api.PlanService.CheckedResult
 import optrak.scalautils.json.JsonImplicits._
-import optrak.lagomtest.utils.PlayJson4s._
+import optrak.lagom.utils .PlayJson4s._
 
 /**
   * Created by tim on 21/01/17.

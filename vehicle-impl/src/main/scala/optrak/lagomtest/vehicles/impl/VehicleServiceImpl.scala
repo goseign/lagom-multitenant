@@ -5,11 +5,14 @@ import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.api.transport.NotFound
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
 import grizzled.slf4j.Logging
+import optrak.lagom.utils.CheckedDoneSerializer.CheckedDone
 import optrak.lagomtest.data.Data.{TenantId, Vehicle, VehicleId}
 import optrak.lagomtest.vehicles.api.VehicleEvents.{VehicleCreated => ApiVehicleCreated, VehicleEvent => ApiVehicleEvent}
+import optrak.lagomtest.vehicles.api.VehicleService.Vehicles
 import optrak.lagomtest.vehicles.api._
+import optrak.scalautils.validating.ErrorReports.EitherER
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Created by tim on 26/01/17.
@@ -52,6 +55,17 @@ class VehicleServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
     vehicleRepository.selectVehiclesForTenant(tenantId)
   }
 
+  override def createVehiclesFromCsv(tenantId: TenantId): ServiceCall[EitherER[Vehicles], CheckedDone] = ServiceCall { vehiclesER =>
+    logger.debug(s"create vehicles $vehiclesER")
+    vehiclesER match {
+      case Left(msgs) => Future.successful(Left(msgs))
+      case Right(vehicles) =>
+        val results = vehicles.map { v =>
+          ref(tenantId, v.id).ask(CreateVehicle(tenantId, v.id, v.capacity))
+        }
+        Future.sequence(results).map(_ => Right(Done))
+    }
+  }
 }
 
 

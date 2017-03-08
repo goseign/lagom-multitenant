@@ -7,7 +7,7 @@ import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.server.LagomApplication
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.data.Data.OrderId
-import optrak.lagomtest.utils.ReadSideTestDriver
+import optrak.lagom.utils .ReadSideTestDriver
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.ws.ahc.AhcWSComponents
 import OrderTestCommon._

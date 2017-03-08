@@ -7,7 +7,7 @@ import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.server.LagomApplication
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import optrak.lagomtest.data.Data.VehicleId
-import optrak.lagomtest.utils.ReadSideTestDriver
+import optrak.lagom.utils .ReadSideTestDriver
 import optrak.lagomtest.vehicles.impl.VehicleEvents.{VehicleCreated, VehicleEvent}
 import optrak.lagomtest.vehicles.impl.VehicleTestCommon._
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}

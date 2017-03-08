@@ -7,7 +7,7 @@ import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, Partition
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.data.Data._
 import optrak.scalautils.json.JsonImplicits._
-import optrak.lagomtest.utils.PlayJson4s._
+import optrak.lagom.utils .PlayJson4s._
 import optrak.lagomtest.sites.api.SiteEvents.SiteEvent
 
 /**

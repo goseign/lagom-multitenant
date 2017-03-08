@@ -6,7 +6,7 @@ import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import optrak.lagomtest.data.Data._
 import play.api.libs.json._
 import optrak.scalautils.json.JsonImplicits._
-import optrak.lagomtest.utils.PlayJson4s._
+import optrak.lagom.utils .PlayJson4s._
 import optrak.scalautils.json.JsonParser
 /**
   * Created by tim on 21/01/17.

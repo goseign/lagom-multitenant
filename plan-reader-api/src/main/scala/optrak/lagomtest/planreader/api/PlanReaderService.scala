@@ -7,7 +7,7 @@ import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import optrak.lagomtest.data.Data._
 import optrak.lagomtest.plan.api.PlanService.SimplePlan
 import optrak.scalautils.json.JsonImplicits._
-import optrak.lagomtest.utils.PlayJson4s._
+import optrak.lagom.utils .PlayJson4s._
 /**
   * Created by tim on 21/01/17.
   * Copyright Tim Pigden, Hertford UK
