@@ -78,8 +78,13 @@ object XlsSerializer extends Logging {
   }
 
 
-  implicit def poiFormatMessageSerializer[Message](implicit workbookMessageSerializer: MessageSerializer[Workbook, ByteString],
-                                                   poiParser: PoiCellParser[Message],
+  /**
+    * unlike the Csv serializer we need to be explicit about whether we want our output format to be xlsx or xls
+    * @param workbookMessageSerializer xls or xlsx?
+    */
+
+  implicit def poiFormatMessageSerializer[Message](workbookMessageSerializer: MessageSerializer[Workbook, ByteString])
+                                                  (implicit poiParser: PoiCellParser[Message],
                                                    poiWriter: PoiRowWriter[Message],
                                                    headerBuilder: HeaderBuilder[Message],
                                                    inputHeaders: InputHeaders,
@@ -94,7 +99,7 @@ object XlsSerializer extends Logging {
           case Left(msg) =>  CheckedDoneSerializer.toByteString(Left(msg))
           case Right(data) =>
             val asXls = protocol == xlsProtocol
-            val workbook = SpreadsheetWriter.createSpreadsheet(true, "data", data, outputHeaders)
+            val workbook = SpreadsheetWriter.createSpreadsheet(asXls, "data", data, outputHeaders)
             poiSerializer.serialize(workbook)
         }
       }
@@ -121,5 +126,20 @@ object XlsSerializer extends Logging {
     override def serializerForRequest: NegotiatedSerializer[EitherER[List[Message]], ByteString] =
       new PoiFormatSerializer(workbookMessageSerializer.serializerForRequest)
   }
+
+  def xlsFormatMessageSerializer[Message]
+                                                  (implicit poiParser: PoiCellParser[Message],
+                                                   poiWriter: PoiRowWriter[Message],
+                                                   headerBuilder: HeaderBuilder[Message],
+                                                   inputHeaders: InputHeaders,
+                                                   outputHeaders: OutputHeaders)
+  : StrictMessageSerializer[EitherER[List[Message]]] = poiFormatMessageSerializer[Message](XlsMessageSerializer)
+
+  def xlsxFormatMessageSerializer[Message](implicit poiParser: PoiCellParser[Message],
+                                                     poiWriter: PoiRowWriter[Message],
+                                                     headerBuilder: HeaderBuilder[Message],
+                                                     inputHeaders: InputHeaders,
+                                                     outputHeaders: OutputHeaders)
+  : StrictMessageSerializer[EitherER[List[Message]]] = poiFormatMessageSerializer[Message](XlsxMessageSerializer)
 
 }

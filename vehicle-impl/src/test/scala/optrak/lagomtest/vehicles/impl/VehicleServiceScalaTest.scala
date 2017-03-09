@@ -5,12 +5,16 @@ package optrak.lagomtest.vehicles.impl
   * Copyright Tim Pigden, Hertford UK
   */
 import akka.Done
+import com.lightbend.lagom.scaladsl.api.deser.StrictMessageSerializer
 import com.lightbend.lagom.scaladsl.api.transport.TransportException
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
-import optrak.lagomtest.data.Data.{Vehicle, VehicleId}
+import optrak.lagom.utils.CheckedDoneSerializer.CheckedDone
+import optrak.lagomtest.data.Data.{TenantId, Vehicle, VehicleId}
+import optrak.lagomtest.vehicles.api.VehicleService.Vehicles
 import optrak.lagomtest.vehicles.api.{VehicleCreationData, VehicleService}
 import optrak.lagomtest.vehicles.impl.VehicleTestCommon._
+import optrak.scalautils.validating.ErrorReports.EitherER
 import org.scalacheck._
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import org.scalacheck.Shapeless._
@@ -33,14 +37,13 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
   
   def createVehicleData(vehicle: Vehicle) = VehicleCreationData(vehicle.capacity)
 
-
   "vehicle service" should {
 
     "create and retrieve vehicle with xml" in {
 
       for {
         answer <- client.createVehicleXml(tenantId, vehicle1Id).invoke(createVehicleData(vehicle1))
-        retrieved <- client.getVehicle(tenantId, vehicle1Id).invoke()
+    //    retrieved <- client.getVehicle(tenantId, vehicle1Id).invoke()
       } yield {
         answer should ===(Done)
       }
@@ -68,12 +71,12 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
     def createP(implicit arb: Arbitrary[VehicleCreationData]): Option[VehicleCreationData] =
       arb.arbitrary.sample
 
-    "create multiple vehicles for single tenant" in {
+   "create multiple vehicles for single tenant" in {
 
       implicitly[Arbitrary[VehicleCreationData]]
 
       // we're going to generate some arbitrary vehicles then check that they actually got created
-      val cps : List[VehicleCreationData] = 0.to(10).flatMap( i => createP ).toList
+      val cps : List[VehicleCreationData] = 0.to(2).flatMap( i => createP ).toList
       val vehicles: List[(VehicleId, VehicleCreationData)] = cps.zipWithIndex.map(t => (t._2.toString, t._1))
       val vehiclesCreated = vehicles.map {t =>
         Thread.sleep(1500)
@@ -102,19 +105,18 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
       }
     }
 
-    "create multiple vehicles with csv" in {
-
-      val tenantId = "newTenant"
-
-      implicitly[Arbitrary[VehicleCreationData]]
-
+    def createVehicles: List[Vehicle] = {
       // we're going to generate some arbitrary vehicles then check that they actually got created
       val cps : List[VehicleCreationData] = 0.to(10).flatMap( i => createP ).toList
-      val vehicles: List[(Vehicle)] = cps.zipWithIndex.map(t => Vehicle(t._2.toString, t._1.capacity))
+      cps.zipWithIndex.map(t => Vehicle(t._2.toString, t._1.capacity))
+    }
 
+    def checkVehicles(storing: Future[CheckedDone],
+                      vehicles: List[Vehicle],
+                      tenantId: TenantId)
+                     (implicit serializer: StrictMessageSerializer[EitherER[Vehicles]]) =
       for {
-        seq <- client.createVehiclesFromCsv(tenantId).invoke(Right(vehicles))
-
+        stored <- storing
         dbAllVehicles <- {
           Thread.sleep(4000)
           client.getVehiclesForTenant(tenantId).invoke()
@@ -133,10 +135,26 @@ class VehicleServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAnd
         true should ===(true)
 
       }
+
+
+    "create multiple vehicles with csv" in {
+
+      val tenantId = "csvTenant"
+      val vehicles = createVehicles
+      val storing = client.createVehiclesFromCsv(tenantId).invoke(Right(vehicles))
+      checkVehicles(storing, vehicles, tenantId)(client.vehiclesCsvSerializer)
+    }
+
+    "create multiple vehicles with xls" in {
+
+      val tenantId = "xlsTenant"
+      val vehicles = createVehicles
+      val storing = client.createVehiclesFromXls(tenantId).invoke(Right(vehicles))
+      checkVehicles(storing, vehicles, tenantId)(client.vehiclesXlsSerializer)
     }
 
 
-
   }
+
 
 }

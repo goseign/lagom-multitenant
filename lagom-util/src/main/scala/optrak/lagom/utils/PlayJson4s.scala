@@ -2,11 +2,11 @@ package optrak.lagom.utils
 
 import java.util.UUID
 
-import akka.Done
+import akka.{Done, NotUsed}
 import cats.data.Validated.{Invalid, Valid}
 import optrak.scalautils.json.{JsonParser, JsonWriter, SimpleJsonWriters}
-import optrak.scalautils.validating.ErrorReports.{HeadContext, ValidatedER, ValidationContext}
-import org.json4s.JsonAST.JValue
+import optrak.scalautils.validating.ErrorReports._
+import org.json4s.JsonAST.{JNothing, JValue}
 import play.api.libs.{json => pjson}
 import org.json4s.{JsonAST => j4s}
 import play.api.data.validation.ValidationError
@@ -14,11 +14,36 @@ import play.api.libs.json._
 import optrak.scalautils.validating.Exceptions._
 import optrak.scalautils.json.JsonImplicits._
 import cats.syntax.either._
+import grizzled.slf4j.Logging
+
 /**
   * Created by tim on 23/02/17.
   * Copyright Tim Pigden, Hertford UK
   */
-object PlayJson4s {
+object PlayJson4s extends Logging {
+
+  implicit val doneFormatter: JsonWriter[Done] = new JsonWriter[Done] {
+    override def write(name: Option[String], a: Done): JValue = JNothing
+  }
+
+  implicit val doneParser: JsonParser[Done] = new JsonParser[Done] {
+    override def parse(n: JValue)(implicit vContext: ValidationContext): ValidatedER[Done] = {
+      logger.debug(s"call done parser")
+      Valid(Done)
+    }
+  }
+
+  implicit val notUsedFormatter: JsonWriter[NotUsed] = new JsonWriter[NotUsed] {
+    override def write(name: Option[String], a: NotUsed): JValue = JNothing
+  }
+
+  implicit val notUsedParser: JsonParser[NotUsed] = new JsonParser[NotUsed] {
+    override def parse(n: JValue)(implicit vContext: ValidationContext): ValidatedER[NotUsed] = {
+      logger.debug(s"call notUsed parser")
+      Valid(NotUsed)
+    }
+  }
+
 
   implicit def uuidParser = new JsonParser[UUID] {
     override def parse(n: JValue)(implicit vContext: ValidationContext): ValidatedER[UUID] =

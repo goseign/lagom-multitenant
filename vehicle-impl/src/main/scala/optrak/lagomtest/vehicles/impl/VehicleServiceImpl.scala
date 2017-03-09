@@ -55,17 +55,26 @@ class VehicleServiceImpl(persistentEntityRegistry: PersistentEntityRegistry,
     vehicleRepository.selectVehiclesForTenant(tenantId)
   }
 
-  override def createVehiclesFromCsv(tenantId: TenantId): ServiceCall[EitherER[Vehicles], CheckedDone] = ServiceCall { vehiclesER =>
+  private def createVehiclesFromMultiple(tenantId: TenantId): ServiceCall[EitherER[Vehicles], CheckedDone] = ServiceCall { vehiclesER =>
     logger.debug(s"create vehicles $vehiclesER")
     vehiclesER match {
-      case Left(msgs) => Future.successful(Left(msgs))
+      case Left(msgs) => {
+        logger.debug(s"parsing messages $msgs")
+        Future.successful(Left(msgs))
+      }
       case Right(vehicles) =>
+        logger.debug(s"got vehicles $vehicles")
         val results = vehicles.map { v =>
           ref(tenantId, v.id).ask(CreateVehicle(tenantId, v.id, v.capacity))
         }
         Future.sequence(results).map(_ => Right(Done))
     }
   }
+
+  override def createVehiclesFromCsv(tenantId: TenantId): ServiceCall[EitherER[Vehicles], CheckedDone] = createVehiclesFromMultiple(tenantId)
+
+  override def createVehiclesFromXls(tenantId: TenantId): ServiceCall[EitherER[Vehicles], CheckedDone] = createVehiclesFromMultiple(tenantId)
+
 }
 
 

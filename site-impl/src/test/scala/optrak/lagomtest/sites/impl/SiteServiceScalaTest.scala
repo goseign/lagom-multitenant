@@ -45,6 +45,7 @@ class SiteServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAft
       }
     }
 
+/*
 
     "complain about 2nd attempt create site" in {
       val exp = recoverToExceptionIf[TransportException](
@@ -98,6 +99,7 @@ class SiteServiceScalaTest extends AsyncWordSpec with Matchers with BeforeAndAft
 
       }
     }
+*/
 
   }
 
